@@ -1,0 +1,8 @@
+type opType = ''
+
+class Operation {
+
+
+
+
+}

@@ -1,0 +1,73 @@
+$editor-line-width: 20px;
+
+@mixin editor {
+  width: 500px;
+  height: 500px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-size: 14px;
+}
+@keyframes blink {
+    75% { opacity: 0.0; }
+}
+
+.koji-editor-textarea {
+  @include editor();
+  transform: rotate(90deg);
+  opacity: 0.2;
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  z-index: 999999;
+  line-height: $editor-line-width;
+}
+
+.koji-editor-overlay {
+    position: fixed;        
+    top: 100px;
+    left: 600px;
+    width: 100%;
+    height: 100%;
+    .koji-editor-caret {
+      position: absolute;
+      border-top: 1px solid black;
+      width: 16px;
+      height: 1px;
+      animation: blink 1s step-end infinite;
+      }
+  }
+
+.koji-editor-display {
+    @include editor();
+    top: 100px;
+    left: 600px;
+    border: 1px solid rgb(180, 180, 180);
+    position: fixed;
+    writing-mode: vertical-rl;
+    overflow-x: scroll;
+    .koji-editor-src-panel {
+        height: 100%;
+        writing-mode: vertical-rl;       
+        .koji-editor-line {
+          min-width: $editor-line-width;
+          line-height: $editor-line-width;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          border: none;
+        }
+      }
+     
+}
+
+.koji-editor-selection {
+    position: absolute;
+    background: #f00;
+    opacity: 0.5;
+    z-index: 100; 
+  }
+  
+
+
+

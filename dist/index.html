@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Koji</title>
+  <meta name="description" content="Koji editor" />
+  <script src="koji-editor.js"></script>
+</head>
+
+<body>
+
+  <div id="koji-editor"></div>
+  <div style="    position: fixed;right: 10px;top: 10px; height: 100%;width: 400px;" id="debug"></div>
+  <script>
+    const el = document.getElementById('koji-editor')
+    const editor = new KojiEditor.Editor(el)
+    const debug = document.getElementById('debug')
+    setInterval(function () {
+      debug.innerHTML = JSON.stringify(store.selectionWithLineNum)
+    }, 1000)
+  </script>
+</body>
+
+</html>
