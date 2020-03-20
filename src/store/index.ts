@@ -17,6 +17,8 @@ interface IState {
     text: string;
   };
   selection: { start: number, end: number; };
+  requestedSelection: { start: number, end: number; };
+
   selectedRects: DOMRect[];
   caretPos: { x: number, y: number }
   input: {
@@ -29,7 +31,15 @@ interface IState {
     width: number;
     height: number;
   };
+  scrollWidth: number;
   scroll: number;
+
+  compositionActive: boolean;
+  compositionText: string;
+  compositionRects: DOMRect[];
+
+  keyboardEvent: KeyboardEvent | null;
+  proposedCaretPos: number;
 }
 export type StateKey = keyof IState;
 
@@ -39,6 +49,10 @@ class Store {
       text: ""
     },
     selection: {
+      start: 0,
+      end: 0
+    },
+    requestedSelection: {
       start: 0,
       end: 0
     },
@@ -52,21 +66,35 @@ class Store {
       },
     },
     scroll: 0,
+    scrollWidth: 0,
     editorSize: {
       width: 0,
       height: 0
     },
-    focus: false
+    focus: false,
+    compositionActive: false,
+    compositionText: '',
+    compositionRects: [],
+
+    keyboardEvent: null,
+    proposedCaretPos: 0
   };
   handlers: { [P in StateName]: Function[] } = {
     src: [],
     selection: [],
+    requestedSelection: [],
     selectedRects: [],
     input: [],
     focus: [],
     scroll: [],
+    scrollWidth: [],
     editorSize: [],
-    caretPos: []
+    caretPos: [],
+    compositionActive: [],
+    compositionText: [],
+    compositionRects: [],
+    keyboardEvent: [],
+    proposedCaretPos: []
   };
 
   get selectedText() {
@@ -143,7 +171,11 @@ class Store {
   }
 
   get prevLine(): string {
-    return this.state.src.text.split("\n")[this.currentSelectedLines.end - 1];
+    return this.state.src.text.split("\n")[this.currentSelectedLines.start - 1];
+  }
+
+  get nextLine(): string {
+    return this.state.src.text.split("\n")[this.currentSelectedLines.end + 1];
   }
 
   get isRegionSelected(): boolean {
@@ -185,6 +217,11 @@ class Store {
     this.state.selection = sel;
   }
 
+  @Mutation("requestedSelection")
+  SET_REQUESTED_SELECTION(sel: { start: number; end: number; }) {
+    this.state.requestedSelection = sel;
+  }
+
   @Mutation("selectedRects")
   SET_SELETECTED_RECTS(value: DOMRect[]) {
     this.state.selectedRects = value;
@@ -195,6 +232,11 @@ class Store {
     this.state.scroll = value;
   }
 
+  @Mutation("scrollWidth")
+  SET_SCROLL_WIDTH(value: number) {
+    this.state.scrollWidth = value;
+  }
+
   @Mutation("editorSize")
   SET_EDITOR_SIZE(width: number, height: number) {
     this.state.editorSize = { width, height };
@@ -203,6 +245,31 @@ class Store {
   @Mutation("caretPos")
   SET_CARET_POS(x: number, y: number) {
     this.state.caretPos = { x, y }
+  }
+
+  @Mutation("compositionActive")
+  SET_COMPOSITION_ACTIVE(value: boolean) {
+    this.state.compositionActive = value
+  }
+
+  @Mutation("compositionText")
+  SET_COMPOSITION_TEXT(value: string) {
+    this.state.compositionText = value
+  }
+
+  @Mutation("compositionRects")
+  SET_COMPOSITION_RECTS(value: DOMRect[]) {
+    this.state.compositionRects = value
+  }
+
+  @Mutation("keyboardEvent")
+  SET_KEYBOARD_EVENT(value: KeyboardEvent | null) {
+    this.state.keyboardEvent = value
+  }
+
+  @Mutation("proposedCaretPos")
+  SET_PROPOSED_CARET_POS(value: number) {
+    this.state.proposedCaretPos = value
   }
 
   $trigger(state: StateName | StateName[]) {

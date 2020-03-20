@@ -19,9 +19,6 @@ export default class Display extends BaseComponent {
     this.add(new Overlay())
 
     store.$watch("src", () => this.onSrcChange());
-    store.$watch('editorSize', () => {
-      this.resize(store.state.editorSize.width, store.state.editorSize.height);
-    });
     store.$watch(['selection', 'src', 'focus'], () => {
       this.updateSelecttionRects()
       this.updateCaretPos()
@@ -33,6 +30,80 @@ export default class Display extends BaseComponent {
         store.state.scroll;
       this.$el.scrollTo(offset, 0)
     })
+    // store.$watch('compositionActive', () => {
+    //   if (store.state.compositionActive) {
+    //     const { start } = store.state.selection
+    //     const length = store.state.compositionText.length
+    //     const rects = this.selectionToRects(start - length, start)
+    //     store.SET_COMPOSITION_RECTS(rects)
+    //   }
+    // })
+    store.$watch('keyboardEvent', () => {
+      const arrowKeys = ['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown']
+      const e = store.state.keyboardEvent
+      if (e && arrowKeys.includes(e.key)) {
+        store.SET_REQUESTED_SELECTION(this.proposeSelection(e))
+        e.preventDefault()
+      }
+    })
+  }
+
+  get lines() {
+    return this.$el.getElementsByClassName('koji-editor-line')
+  }
+
+  private proposeSelection(e: KeyboardEvent): { start: number, end: number } {
+    const text = store.state.src.text
+    const sel = store.selectionWithLineNum
+    const { start, end } = store.state.selection
+    switch (e.key) {
+      case 'ArrowUp':
+        if (start > 0) {
+          return e.shiftKey ? { start: start - 1, end } : { start: start - 1, end: start - 1 }
+        }
+        break;
+      case 'ArrowDown':
+        if (end < text.length) {
+          return e.shiftKey ? { start, end: end + 1 } : { start: end + 1, end: end + 1 }
+        }
+      case 'ArrowRight':
+        const prevLine = store.prevLine
+        let rightPos = 0
+        console.log(prevLine)
+        if (!prevLine) return { start, end }
+        if (sel.start.pos <= prevLine.length) {
+          rightPos = this.inlinePosToAbsolutePos(sel.start.linenum - 1, sel.start.pos)
+        } else {
+          rightPos = start - sel.end.pos - 1
+        }
+        return e.shiftKey ? { start: rightPos, end } : { start: rightPos, end: rightPos }
+        break;
+      case 'ArrowLeft':
+        const nextLine = store.nextLine
+        let leftPos = 0
+        if (!nextLine) return { start, end }
+        if (sel.end.pos <= nextLine.length) {
+          leftPos = this.inlinePosToAbsolutePos(sel.end.linenum + 1, sel.end.pos)
+        } else {
+          leftPos = this.inlinePosToAbsolutePos(sel.end.linenum + 1, nextLine.length)
+        }
+        console.log(sel, leftPos, nextLine)
+        return e.shiftKey ? { start, end: leftPos } : { start: leftPos, end: leftPos }
+        break;
+      default:
+        break
+    }
+    // do nothiing
+    return { start, end }
+  }
+
+  private inlinePosToAbsolutePos(lineNum: number, pos: number): number {
+    const text = store.state.src.text
+    let abspos = 0
+    text.split("\n").slice(0, lineNum).forEach((l) => abspos += l.length + 1)
+    console.log(lineNum, pos, abspos)
+    abspos += pos
+    return abspos
   }
 
   resize(width: number, height: number) {
@@ -129,6 +200,51 @@ export default class Display extends BaseComponent {
       }
     }
     store.SET_SELETECTED_RECTS(rects);
+  }
+
+  getLinePos(pos: number): { pos: number, lineNum: number } {
+    const text = store.state.src.text
+    let lineNum = 0
+    let inlinePos = 0
+    for (let i = 0; i < text.length; i++) {
+      if (i == pos) return { pos: inlinePos, lineNum: lineNum }
+      if (text[i] === "\n") {
+        lineNum++
+        inlinePos = 0
+      } else {
+        inlinePos++
+      }
+    }
+    return { pos: inlinePos, lineNum: lineNum }
+  }
+
+  selectionToRects(start: number, end: number) {
+    const rects: DOMRect[] = []
+    const lines = this.lines
+    const sLinePos = this.getLinePos(start)
+    const eLinePos = this.getLinePos(end)
+    console.log(sLinePos, eLinePos)
+    // single line
+    if (sLinePos.lineNum == eLinePos.lineNum) {
+      if (sLinePos.pos == eLinePos.pos) return []
+      const line = lines[sLinePos.lineNum]
+      const rect = this.createRelativeRect(line, sLinePos.pos, eLinePos.pos)
+      rects.push(rect)
+    } else {
+      // multiline
+      const headLine = lines[sLinePos.lineNum]
+      const headRect = this.createRelativeRect(headLine, sLinePos.pos, headLine.textContent?.length || 0)
+      const tailLine = lines[eLinePos.lineNum]
+      const tailRect = this.createRelativeRect(tailLine, 0, eLinePos.pos)
+      rects.push(headRect)
+      rects.push(tailRect)
+      for (let i = sLinePos.lineNum + 1; i < eLinePos.lineNum; i++) {
+        let line = lines[i]
+        let rect = this.createRelativeRect(line, 0, line.textContent?.length || 0)
+        rects.push(rect)
+      }
+    }
+    return rects
   }
 
   createRelativeRect(node: Node, start: number, end: number): DOMRect {

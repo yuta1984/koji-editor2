@@ -1,10 +1,12 @@
 import BaseComponent from "./BaseComponent";
 import store from "../store";
+import { writeHeapSnapshot } from "v8";
 
 
 export default class SourceSelector extends BaseComponent {
     $el: HTMLElement;
     selDivs: HTMLDivElement[];
+    compositionDivs: HTMLElement[];
     caret: HTMLSpanElement;
 
     constructor() {
@@ -14,10 +16,22 @@ export default class SourceSelector extends BaseComponent {
         this.$el.appendChild(this.caret)
         this.hideCaret()
         this.selDivs = [];
+        this.compositionDivs = [];
 
         store.$watch('editorSize', () => {
             this.resize(store.state.editorSize.width, store.state.editorSize.height);
         });
+        store.$watch('scroll', () => {
+            const offset =
+                this.$el.scrollWidth -
+                this.$el.clientWidth -
+                store.state.scroll;
+            this.$el.scrollTo(offset, 0)
+        })
+        store.$watch('scrollWidth', () => {
+            this.$el.style.width = store.state.scrollWidth + "px"
+        })
+
         store.$watch('selectedRects', () => {
             store.isRegionSelected ? this.renderSelections() : this.renderSelections()
         });
@@ -27,6 +41,27 @@ export default class SourceSelector extends BaseComponent {
         store.$watch('focus', () => {
             store.state.focus ? this.moveCaret() : this.hideCaret()
         })
+        store.$watch('compositionRects', () => {
+            const rects = store.state.compositionRects
+            this.resetCompositionRects()
+            rects.forEach(r => {
+                const div = this.h('div', 'koji-editor-composition-bar')
+                div.style.top = r.y + "px"
+                div.style.left = r.x + "px"
+                div.style.height = r.height + "px"
+                div.style.width = r.width + "px"
+                this.compositionDivs.push(div)
+                this.$el.appendChild(div)
+            })
+            console.log(store.state.compositionRects, this.compositionDivs)
+        })
+    }
+
+    resetCompositionRects() {
+        this.compositionDivs.forEach(div => {
+            div.remove()
+        })
+        this.compositionDivs = []
     }
 
     moveCaret() {

@@ -15,7 +15,7 @@ $editor-line-width: 20px;
 .koji-editor-textarea {
   @include editor();
   transform: rotate(90deg);
-  opacity: 0.2;
+  opacity: 0.5;
   position: fixed;
   top: 100px;
   left: 100px;
@@ -23,20 +23,6 @@ $editor-line-width: 20px;
   line-height: $editor-line-width;
 }
 
-.koji-editor-overlay {
-    position: fixed;        
-    top: 100px;
-    left: 600px;
-    width: 100%;
-    height: 100%;
-    .koji-editor-caret {
-      position: absolute;
-      border-top: 1px solid black;
-      width: 16px;
-      height: 1px;
-      animation: blink 1s step-end infinite;
-      }
-  }
 
 .koji-editor-display {
     @include editor();
@@ -46,7 +32,34 @@ $editor-line-width: 20px;
     position: fixed;
     writing-mode: vertical-rl;
     overflow-x: scroll;
+    .koji-editor-overlay {
+        position: absolute;
+        height: 100%;
+        min-width: 100%;
+        writing-mode: vertical-rl;  
+        position: relative;
+        .koji-editor-caret {
+            position: absolute;
+          border-top: 1px solid black;
+          width: 16px;
+          height: 1px;
+          animation: blink 1s step-end infinite;
+          }
+        .koji-editor-selection {
+            position: absolute;
+            background: #f00;
+            opacity: 0.5;
+            z-index: 100; 
+          }
+          .koji-editor-composition-bar {
+              position: absolute;
+              border-left: 1px solid black;
+              z-index: 101;
+          }
+      }
     .koji-editor-src-panel {
+        min-width: 100%;
+        position: absolute;
         height: 100%;
         writing-mode: vertical-rl;       
         .koji-editor-line {
@@ -61,12 +74,7 @@ $editor-line-width: 20px;
      
 }
 
-.koji-editor-selection {
-    position: absolute;
-    background: #f00;
-    opacity: 0.5;
-    z-index: 100; 
-  }
+
   
 
 

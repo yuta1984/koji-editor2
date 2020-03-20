@@ -13,7 +13,15 @@ export default class HiddenTextArea extends BaseComponent {
     this.observeSelection();
     this.observeScroll();
     this.observeResize();
+    this.observeComposition();
+    this.observeKeyEvent();
     setTimeout(() => store.SET_EDITOR_SIZE(this.$el.clientWidth, this.$el.clientHeight), 100);
+
+    store.$watch('requestedSelection', () => {
+      const sel = store.state.requestedSelection
+      this.$el.selectionStart = sel.start
+      this.$el.selectionEnd = sel.end
+    })
   }
 
   observeFocus() {
@@ -58,6 +66,7 @@ export default class HiddenTextArea extends BaseComponent {
 
   observeScroll() {
     this.$el.addEventListener("scroll", event => {
+      store.SET_SCROLL_WIDTH(this.$el.scrollHeight)
       store.SET_SCROLL(this.$el.scrollTop);
     });
   }
@@ -68,5 +77,26 @@ export default class HiddenTextArea extends BaseComponent {
     });
   }
 
+  observeComposition() {
+    this.$el.addEventListener('compositionstart', (e) => {
+      store.SET_COMPOSITION_ACTIVE(true)
+      store.SET_COMPOSITION_RECTS([])
+    })
+    this.$el.addEventListener('compositionupdate', (e: any) => {
+      console.log(e)
+      store.SET_COMPOSITION_TEXT(e.data)
+      store.SET_COMPOSITION_ACTIVE(true)
 
+    })
+    this.$el.addEventListener('compositionend', (e) => {
+      store.SET_COMPOSITION_ACTIVE(false)
+      store.SET_COMPOSITION_RECTS([])
+    })
+  }
+
+  observeKeyEvent() {
+    this.$el.addEventListener("keydown", (e) => {
+      store.SET_KEYBOARD_EVENT(e)
+    })
+  }
 }
