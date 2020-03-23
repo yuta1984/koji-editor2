@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "A web-based text editor for Koji, a lightweight markup language for historical Japanese texts",
   "main": "index.js",
+  "engines": {
+    "node": "11.14.0",
+    "npm": "6.7.0"
+  },
   "scripts": {
     "start": "webpack-dev-server --port 9000 --inline --progress --profile --colors --watch --content-base dist/ --mode development",
     "build": "webpack --config webpack.config.js --mode production",
