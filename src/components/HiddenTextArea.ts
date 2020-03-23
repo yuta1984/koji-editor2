@@ -17,6 +17,12 @@ export default class HiddenTextArea extends BaseComponent {
     this.observeKeyEvent();
     setTimeout(() => store.SET_EDITOR_SIZE(this.$el.clientWidth, this.$el.clientHeight), 100);
 
+    store.$watch('requestedSrc', () => {
+      const text = store.state.requestedSrc
+      this.$el.value = text
+      store.SET_INPUT({ srcText: text, selection: { start: 0, end: 0 } })
+    })
+
     store.$watch('requestedSelection', () => {
       const sel = store.state.requestedSelection
       this.$el.selectionStart = sel.start
@@ -83,7 +89,6 @@ export default class HiddenTextArea extends BaseComponent {
       store.SET_COMPOSITION_RECTS([])
     })
     this.$el.addEventListener('compositionupdate', (e: any) => {
-      console.log(e)
       store.SET_COMPOSITION_TEXT(e.data)
       store.SET_COMPOSITION_ACTIVE(true)
 

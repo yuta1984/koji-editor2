@@ -16,6 +16,7 @@ interface IState {
   src: {
     text: string;
   };
+  requestedSrc: string;
   selection: { start: number, end: number; };
   requestedSelection: { start: number, end: number; };
 
@@ -48,6 +49,7 @@ class Store {
     src: {
       text: ""
     },
+    requestedSrc: "",
     selection: {
       start: 0,
       end: 0
@@ -81,6 +83,7 @@ class Store {
   };
   handlers: { [P in StateName]: Function[] } = {
     src: [],
+    requestedSrc: [],
     selection: [],
     requestedSelection: [],
     selectedRects: [],
@@ -197,6 +200,10 @@ class Store {
     return this.state.input.text[idx - 1];
   }
 
+  @Mutation("requestedSrc")
+  SET_REQUESTED_SRC(value: string) {
+    this.state.requestedSrc = value
+  }
 
   @Mutation("src")
   SET_INPUT(payload: { srcText: string, inputEvent?: InputEvent, selection: { start: number; end: number; }; }) {
@@ -273,7 +280,6 @@ class Store {
   }
 
   $trigger(state: StateName | StateName[]) {
-    console.log(state)
     if (isArray(state)) {
       state.forEach(s => {
         this.handlers[s].forEach(function (this: any, h) {

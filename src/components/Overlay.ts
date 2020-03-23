@@ -39,7 +39,12 @@ export default class SourceSelector extends BaseComponent {
             store.isRegionSelected ? this.hideCaret() : this.moveCaret()
         )
         store.$watch('focus', () => {
-            store.state.focus ? this.moveCaret() : this.hideCaret()
+            if (store.state.focus) {
+                this.moveCaret()
+            } else {
+                this.hideCaret()
+                this.resetSelection()
+            }
         })
         store.$watch('compositionRects', () => {
             const rects = store.state.compositionRects
@@ -53,7 +58,6 @@ export default class SourceSelector extends BaseComponent {
                 this.compositionDivs.push(div)
                 this.$el.appendChild(div)
             })
-            console.log(store.state.compositionRects, this.compositionDivs)
         })
     }
 
@@ -71,7 +75,7 @@ export default class SourceSelector extends BaseComponent {
     }
 
     hideCaret() {
-        this.caret.style.display = 'none'
+        this.caret.style['display'] = 'none'
     }
 
     renderSelections() {

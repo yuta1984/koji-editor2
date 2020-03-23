@@ -69,8 +69,7 @@ export default class Display extends BaseComponent {
       case 'ArrowRight':
         const prevLine = store.prevLine
         let rightPos = 0
-        console.log(prevLine)
-        if (!prevLine) return { start, end }
+        if (prevLine === undefined) return { start, end }
         if (sel.start.pos <= prevLine.length) {
           rightPos = this.inlinePosToAbsolutePos(sel.start.linenum - 1, sel.start.pos)
         } else {
@@ -80,14 +79,14 @@ export default class Display extends BaseComponent {
         break;
       case 'ArrowLeft':
         const nextLine = store.nextLine
+        console.log("next line", nextLine)
         let leftPos = 0
-        if (!nextLine) return { start, end }
+        if (nextLine === undefined) return { start, end }
         if (sel.end.pos <= nextLine.length) {
           leftPos = this.inlinePosToAbsolutePos(sel.end.linenum + 1, sel.end.pos)
         } else {
           leftPos = this.inlinePosToAbsolutePos(sel.end.linenum + 1, nextLine.length)
         }
-        console.log(sel, leftPos, nextLine)
         return e.shiftKey ? { start, end: leftPos } : { start: leftPos, end: leftPos }
         break;
       default:
@@ -101,7 +100,6 @@ export default class Display extends BaseComponent {
     const text = store.state.src.text
     let abspos = 0
     text.split("\n").slice(0, lineNum).forEach((l) => abspos += l.length + 1)
-    console.log(lineNum, pos, abspos)
     abspos += pos
     return abspos
   }
@@ -112,11 +110,11 @@ export default class Display extends BaseComponent {
   }
 
   renderLine(text: string): HTMLElement {
-    // const tokenizer = new KojiTokenizer(text)
-    // const tokens = tokenizer.tokenize()
-    // const html = tokens.map(t => `<span class="token-${t.type}">${t.value}</span>`).join('')
+    const tokenizer = new KojiTokenizer(text)
+    const tokens = tokenizer.tokenize()
+    const html = tokens.map(t => `<span class="token ${t.type}">${t.value}</span>`).join('')
     const lineElem = this.h('div', 'koji-editor-line');
-    lineElem.innerHTML = text; //html
+    lineElem.innerHTML = html; //html
     return lineElem;
   }
 
@@ -223,7 +221,6 @@ export default class Display extends BaseComponent {
     const lines = this.lines
     const sLinePos = this.getLinePos(start)
     const eLinePos = this.getLinePos(end)
-    console.log(sLinePos, eLinePos)
     // single line
     if (sLinePos.lineNum == eLinePos.lineNum) {
       if (sLinePos.pos == eLinePos.pos) return []
@@ -247,11 +244,46 @@ export default class Display extends BaseComponent {
     return rects
   }
 
+  private walkDOM(node: Node | null, func: (n: Node | null) => void) {
+    func(node);
+    node = node ? node.firstChild : null;
+    while (node) {
+      this.walkDOM(node, func);
+      node = node.nextSibling;
+    }
+  }
+
   createRelativeRect(node: Node, start: number, end: number): DOMRect {
+    // create range from selection position
     const range = document.createRange();
     if (node.firstChild == null) throw Error
-    range.setStart(node.firstChild, start);
-    range.setEnd(node.firstChild, end);
+    let count = 0
+    let startNode: Node = node
+    let endNode: Node = node
+    let startOffset = 0
+    let endOffset = 0
+    this.walkDOM(node, (n) => {
+      if (n && n.nodeType == Node.TEXT_NODE && n.textContent) {
+        const chars = n.textContent.split('')
+        let offset = 0
+        for (let i = 0; i < chars.length; i++) {
+          count++
+          offset++
+          if (count === start) {
+            startNode = n
+            startOffset = offset
+          }
+          if (count === end) {
+            endNode = n
+            endOffset = offset
+          }
+        }
+      }
+    })
+    if (!startNode || !endNode) throw Error('node not found')
+    range.setStart(startNode, startOffset);
+    range.setEnd(endNode, endOffset);
+    // create rect from the range
     const parentRect = this.srcPanel.getBoundingClientRect()
     const rect = range.getBoundingClientRect();
     rect.x = rect.x - parentRect.x
@@ -261,7 +293,7 @@ export default class Display extends BaseComponent {
   }
 
   onSrcChange() {
-    if (!store.state.input.inputEvent) return;
+    if (!store.state.input.inputEvent) return this.renderAll();
     switch (store.state.input.inputEvent.inputType) {
       case "insertText":
         this.deleteLines(store.prevSelectedLines);
@@ -335,11 +367,14 @@ export default class Display extends BaseComponent {
         break;
       case "deleteContentBackward":
         if (store.prevPos.char == 0) {
-          this.deleteLines(store.prevSelectedLines);
+          const { start, end } = store.prevSelectedLines
+          this.deleteLines({ start: start - 1, end });
+          this.insertLineAt(store.currentLine, store.prevSelectedLines.start - 1);
         } else {
           this.deleteLines(store.prevSelectedLines);
-          this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+          this.insertLineAt(store.currentLine, store.prevSelectedLines.start);
         }
+
         break;
       case "deleteContentForward":
         if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(store.prevSelectedLines);

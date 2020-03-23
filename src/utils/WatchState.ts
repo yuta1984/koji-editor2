@@ -3,9 +3,8 @@ import { StateKey } from "../store/index";
 
 export function KojiComponent(target: any) {
   const original = target;
-  const rewritten: any = function(this: any) {
+  const rewritten: any = function (this: any) {
     const ret = original.apply(this, arguments);
-    console.log("hoge", this.__proto__);
     return ret;
   };
   rewritten.prototype = original.prototype;
@@ -13,7 +12,7 @@ export function KojiComponent(target: any) {
 }
 
 export function WatchStore(stateNames: StateKey[]) {
-  return function(target: any, name: string, descriptor: PropertyDescriptor) {
+  return function (target: any, name: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
     for (let name of stateNames) {
       target.__storeHandlers = target.__storeHandlers || {};

@@ -1,5 +1,7 @@
 $editor-line-width: 20px;
 
+@import url(http://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
+
 @mixin editor {
   width: 500px;
   height: 500px;
@@ -7,75 +9,85 @@ $editor-line-width: 20px;
   padding: 0;
   border: none;
   font-size: 14px;
+  font-family: "Noto Sans JP", sans-serif;
 }
 @keyframes blink {
-    75% { opacity: 0.0; }
+  75% {
+    opacity: 0;
+  }
 }
 
 .koji-editor-textarea {
   @include editor();
   transform: rotate(90deg);
-  opacity: 0.5;
+  opacity: 0.3;
   position: fixed;
   top: 100px;
   left: 100px;
   z-index: 999999;
   line-height: $editor-line-width;
+  overflow-y: scroll;
 }
-
 
 .koji-editor-display {
-    @include editor();
-    top: 100px;
-    left: 600px;
-    border: 1px solid rgb(180, 180, 180);
-    position: fixed;
+  @include editor();
+  top: 100px;
+  left: 100px;
+  border: 1px solid rgb(180, 180, 180);
+  position: fixed;
+  writing-mode: vertical-rl;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  .koji-editor-overlay {
+    position: absolute;
+    height: 100%;
+    min-width: 100%;
     writing-mode: vertical-rl;
-    overflow-x: scroll;
-    .koji-editor-overlay {
-        position: absolute;
-        height: 100%;
-        min-width: 100%;
-        writing-mode: vertical-rl;  
-        position: relative;
-        .koji-editor-caret {
-            position: absolute;
-          border-top: 1px solid black;
-          width: 16px;
-          height: 1px;
-          animation: blink 1s step-end infinite;
-          }
-        .koji-editor-selection {
-            position: absolute;
-            background: #f00;
-            opacity: 0.5;
-            z-index: 100; 
-          }
-          .koji-editor-composition-bar {
-              position: absolute;
-              border-left: 1px solid black;
-              z-index: 101;
-          }
-      }
-    .koji-editor-src-panel {
-        min-width: 100%;
-        position: absolute;
-        height: 100%;
-        writing-mode: vertical-rl;       
-        .koji-editor-line {
-          min-width: $editor-line-width;
-          line-height: $editor-line-width;
-          height: 100%;
-          margin: 0;
-          padding: 0;
-          border: none;
-        }
-      }
-     
+    position: relative;
+    .koji-editor-caret {
+      position: absolute;
+      border-top: 1px solid black;
+      width: 16px;
+      height: 1px;
+      animation: blink 1s step-end infinite;
+    }
+    .koji-editor-selection {
+      position: absolute;
+      background: #f00;
+      opacity: 0.5;
+      z-index: 100;
+    }
+    .koji-editor-composition-bar {
+      position: absolute;
+      border-left: 1px solid black;
+      z-index: 101;
+    }
+  }
+  .koji-editor-src-panel {
+    min-width: 100%;
+    position: absolute;
+    height: 100%;
+    writing-mode: vertical-rl;
+    .koji-editor-line {
+      min-width: $editor-line-width;
+      line-height: $editor-line-width;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+    .FURIGANA_START,
+    .FURIGANA,
+    .FURIGANA_END {
+      color: blue;
+    }
+    .UNKNOWN {
+      background-color: yellow;
+    }
+    .ANNO_START,
+    .ANNO_END,
+    .ANNOTATION {
+      color: red;
+    }
+  }
 }
-
-
-  
-
-
-
