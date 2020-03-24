@@ -18,16 +18,16 @@ export default class HiddenTextArea extends BaseComponent {
     setTimeout(() => store.SET_EDITOR_SIZE(this.$el.clientWidth, this.$el.clientHeight), 100);
 
     store.$watch('requestedSrc', () => {
-      const text = store.state.requestedSrc
-      this.$el.value = text
-      store.SET_INPUT({ srcText: text, selection: { start: 0, end: 0 } })
-    })
+      const text = store.state.requestedSrc;
+      this.$el.value = text;
+      store.SET_INPUT({ srcText: text, selection: { start: 0, end: 0 } });
+    });
 
     store.$watch('requestedSelection', () => {
-      const sel = store.state.requestedSelection
-      this.$el.selectionStart = sel.start
-      this.$el.selectionEnd = sel.end
-    })
+      const sel = store.state.requestedSelection;
+      this.$el.selectionStart = sel.start;
+      this.$el.selectionEnd = sel.end;
+    });
   }
 
   observeFocus() {
@@ -35,6 +35,7 @@ export default class HiddenTextArea extends BaseComponent {
       store.SET_FOCUS(true);
     });
     this.$el.addEventListener("blur", () => {
+      console.log("blur");
       store.SET_FOCUS(false);
     });
   }
@@ -47,6 +48,7 @@ export default class HiddenTextArea extends BaseComponent {
           end: this.$el.selectionEnd
         }
       });
+      store.SET_SCROLL_WIDTH(this.$el.scrollHeight);
     });
     store.SET_SELECTION({
       start: this.$el.selectionStart,
@@ -72,7 +74,7 @@ export default class HiddenTextArea extends BaseComponent {
 
   observeScroll() {
     this.$el.addEventListener("scroll", event => {
-      store.SET_SCROLL_WIDTH(this.$el.scrollHeight)
+      //store.SET_SCROLL_WIDTH(this.$el.scrollHeight);
       store.SET_SCROLL(this.$el.scrollTop);
     });
   }
@@ -85,23 +87,23 @@ export default class HiddenTextArea extends BaseComponent {
 
   observeComposition() {
     this.$el.addEventListener('compositionstart', (e) => {
-      store.SET_COMPOSITION_ACTIVE(true)
-      store.SET_COMPOSITION_RECTS([])
-    })
+      store.SET_COMPOSITION_ACTIVE(true);
+      store.SET_COMPOSITION_RECTS([]);
+    });
     this.$el.addEventListener('compositionupdate', (e: any) => {
-      store.SET_COMPOSITION_TEXT(e.data)
-      store.SET_COMPOSITION_ACTIVE(true)
+      store.SET_COMPOSITION_TEXT(e.data);
+      store.SET_COMPOSITION_ACTIVE(true);
 
-    })
+    });
     this.$el.addEventListener('compositionend', (e) => {
-      store.SET_COMPOSITION_ACTIVE(false)
-      store.SET_COMPOSITION_RECTS([])
-    })
+      store.SET_COMPOSITION_ACTIVE(false);
+      store.SET_COMPOSITION_RECTS([]);
+    });
   }
 
   observeKeyEvent() {
     this.$el.addEventListener("keydown", (e) => {
-      store.SET_KEYBOARD_EVENT(e)
-    })
+      store.SET_KEYBOARD_EVENT(e);
+    });
   }
 }

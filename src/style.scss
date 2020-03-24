@@ -3,13 +3,15 @@ $editor-line-width: 20px;
 @import url(https://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
 
 @mixin editor {
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
   margin: 0;
   padding: 0;
   border: none;
   font-size: 14px;
   font-family: "Noto Sans JP", sans-serif;
+  word-break: break-all;
+  word-wrap: break-word;
 }
 @keyframes blink {
   75% {
@@ -19,6 +21,7 @@ $editor-line-width: 20px;
 
 .koji-editor-textarea {
   @include editor();
+  overflow-wrap: break-word;
   transform: rotate(90deg);
   opacity: 0.3;
   position: fixed;
@@ -38,6 +41,17 @@ $editor-line-width: 20px;
   writing-mode: vertical-rl;
   overflow-x: scroll;
   overflow-y: hidden;
+  white-space: pre;
+  .koji-editor-white-space {
+    color: #dcdcdc;
+  }
+  .koji-editor-lb::before {
+    content: "\21B5";
+    color: #a9d1ff;
+    font-size: 12px;
+    margin-top: 2px;
+    position: absolute;
+  }
   .koji-editor-overlay {
     position: absolute;
     height: 100%;
@@ -64,17 +78,20 @@ $editor-line-width: 20px;
     }
   }
   .koji-editor-src-panel {
+    overflow-wrap: break-word;
     min-width: 100%;
     position: absolute;
     height: 100%;
     writing-mode: vertical-rl;
+    word-break: break-all;
     .koji-editor-line {
       min-width: $editor-line-width;
       line-height: $editor-line-width;
       height: 100%;
       margin: 0;
       padding: 0;
-      border: none;
+      position: relative;
+      white-space: normal;
     }
     .FURIGANA_START,
     .FURIGANA,
