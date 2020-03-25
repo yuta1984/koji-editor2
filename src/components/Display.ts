@@ -3,6 +3,7 @@ import store from "../store";
 import { Token } from "../types";
 import KojiTokenizer from '../tokenizers/KojiTokenizer';
 import Overlay from './Overlay';
+import { start } from 'repl';
 
 export default class Display extends BaseComponent {
   $el: HTMLElement;
@@ -54,7 +55,7 @@ export default class Display extends BaseComponent {
 
   private proposeSelection(e: KeyboardEvent): { start: number, end: number; } {
     const text = store.state.src.text;
-    const sel = store.selectionWithLineNum;
+    const sel = store.currentSelection;
     const { start, end } = store.state.selection;
     switch (e.key) {
       case 'ArrowUp':
@@ -79,7 +80,6 @@ export default class Display extends BaseComponent {
         break;
       case 'ArrowLeft':
         const nextLine = store.nextLine;
-        console.log("next line", nextLine);
         let leftPos = 0;
         if (nextLine === undefined) return { start, end };
         if (sel.end.pos <= nextLine.length) {
@@ -135,9 +135,9 @@ export default class Display extends BaseComponent {
     return this.srcPanel.childNodes.item(num);
   }
 
-  deleteLines(range: { start: number, end: number; }) {
+  deleteLines(start: number, end: number) {
     const children = [];
-    for (let i = range.start; i <= range.end; i++) {
+    for (let i = start; i <= end; i++) {
       children.push(this.lineAt(i));
     }
     for (let child of children) {
@@ -170,7 +170,7 @@ export default class Display extends BaseComponent {
   }
 
   updateCaretPos() {
-    const sel = store.selectionWithLineNum;
+    const sel = store.currentSelection;
     const lines = this.$el.getElementsByClassName('koji-editor-line');
     const line = lines[sel.start.linenum];
     const parentRect = this.srcPanel.getBoundingClientRect();
@@ -185,7 +185,7 @@ export default class Display extends BaseComponent {
 
   updateSelecttionRects() {
     const rects: DOMRect[] = [];
-    const sel = store.selectionWithLineNum;
+    const sel = store.currentSelection;
     const lines = this.$el.getElementsByClassName('koji-editor-line');
     // when selection is within single line
     if (sel.start.linenum == sel.end.linenum) {
@@ -307,21 +307,27 @@ export default class Display extends BaseComponent {
 
   onSrcChange() {
     if (!store.state.input.inputEvent) return this.renderAll();
+    const inputSelection = store.inputSelection;
+    const startLine = inputSelection.start.linenum;
+    const endLine = inputSelection.end.linenum;
     switch (store.state.input.inputEvent.inputType) {
       case "insertText":
-        this.deleteLines(store.prevSelectedLines);
-        this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+        this.deleteLines(startLine, endLine);
+        this.insertLineAt(store.currentLine, endLine);
         break;
       case "insertLineBreak":
-        this.deleteLines(store.prevSelectedLines);
-        const line1 = store.lines[store.currentSelectedLines.start - 1];
-        const line2 = store.lines[store.currentSelectedLines.start];
-        this.insertLineAt(line1, store.prevSelectedLines.end);
-        this.insertLineAt(line2, store.prevSelectedLines.end + 1);
+        const currentSelection = store.currentSelection;
+        const cStartLine = currentSelection.start.linenum;
+        const cendLine = currentSelection.end.linenum;
+        this.deleteLines(startLine, endLine);
+        const line1 = store.lines[cStartLine - 1];
+        const line2 = store.lines[cStartLine];
+        this.insertLineAt(line1, endLine);
+        this.insertLineAt(line2, endLine + 1);
         break;
       case "insertCompositionText":
-        this.deleteLines(store.prevSelectedLines);
-        this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+        this.deleteLines(startLine, endLine);
+        this.insertLineAt(store.currentLine, endLine);
         break;
       case "insertFromPaste":
         this.renderAll();
@@ -339,35 +345,35 @@ export default class Display extends BaseComponent {
         this.renderAll();
         break;
       case "deleteWordBackward":
-        this.deleteLines(store.prevSelectedLines);
-        this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+        this.deleteLines(startLine, endLine);
+        this.insertLineAt(store.currentLine, endLine);
         break;
       case "deleteWordForward":
-        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(store.prevSelectedLines);
-        this.deleteLines(store.prevSelectedLines);
-        this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(startLine, endLine);
+        this.deleteLines(startLine, endLine);
+        this.insertLineAt(store.currentLine, endLine);
         break;
       case "deleteSoftLineBackward":
-        this.deleteLines(store.prevSelectedLines);
-        this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+        this.deleteLines(startLine, endLine);
+        this.insertLineAt(store.currentLine, endLine);
         break;
       case "deleteSoftLineForward":
-        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(store.prevSelectedLines);
-        this.deleteLines(store.prevSelectedLines);
-        this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(startLine, endLine);
+        this.deleteLines(startLine, endLine);
+        this.insertLineAt(store.currentLine, endLine);
         break;
       case "deleteEntireSoftLine":
-        this.deleteLines(store.prevSelectedLines);
-        this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+        this.deleteLines(startLine, endLine);
+        this.insertLineAt(store.currentLine, endLine);
         break;
       case "deleteHardLineBackward":
-        this.deleteLines(store.prevSelectedLines);
-        this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+        this.deleteLines(startLine, endLine);
+        this.insertLineAt(store.currentLine, endLine);
         break;
       case "deleteHardLineForward":
-        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(store.prevSelectedLines);
-        this.deleteLines(store.prevSelectedLines);
-        this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(startLine, endLine);
+        this.deleteLines(startLine, endLine);
+        this.insertLineAt(store.currentLine, endLine);
         break;
       case "deleteByDrag":
         this.renderAll();
@@ -379,20 +385,19 @@ export default class Display extends BaseComponent {
         this.renderAll();
         break;
       case "deleteContentBackward":
-        if (store.prevPos.char == 0) {
-          const { start, end } = store.prevSelectedLines;
-          this.deleteLines({ start: start - 1, end });
-          this.insertLineAt(store.currentLine, store.prevSelectedLines.start - 1);
+        if (inputSelection.start.pos == 0) {
+          this.deleteLines(startLine - 1, endLine);
+          this.insertLineAt(store.currentLine, startLine - 1);
         } else {
-          this.deleteLines(store.prevSelectedLines);
-          this.insertLineAt(store.currentLine, store.prevSelectedLines.start);
+          this.deleteLines(startLine, endLine);
+          this.insertLineAt(store.currentLine, startLine);
         }
 
         break;
       case "deleteContentForward":
-        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(store.prevSelectedLines);
-        this.deleteLines(store.prevSelectedLines);
-        this.insertLineAt(store.currentLine, store.prevSelectedLines.end);
+        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(startLine, endLine);
+        this.deleteLines(startLine, endLine);
+        this.insertLineAt(store.currentLine, endLine);
         break;
       case "historyUndo":
         this.renderAll();
