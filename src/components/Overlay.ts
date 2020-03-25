@@ -33,11 +33,19 @@ export default class SourceSelector extends BaseComponent {
         });
 
         store.$watch('selectedRects', () => {
-            store.isRegionSelected ? this.renderSelections() : this.renderSelections();
+            if (store.state.focus && store.isRegionSelected) {
+                this.renderSelections();
+            } else {
+                this.resetSelection();
+            };
         });
-        store.$watch(['caretPos', 'input', 'scrollWidth'], () =>
-            store.isRegionSelected ? this.hideCaret() : this.moveCaret()
-        );
+        store.$watch(['caretPos', 'input'], () => {
+            if (store.state.focus && !store.isRegionSelected) {
+                this.moveCaret();
+            } else {
+                this.hideCaret();
+            }
+        });
         store.$watch('focus', () => {
             if (store.state.focus) {
                 this.moveCaret();
@@ -68,7 +76,6 @@ export default class SourceSelector extends BaseComponent {
     }
 
     moveCaret() {
-        console.log("movecaret");
         this.caret.style.display = "block";
         this.caret.style.top = store.state.caretPos.y + "px";
         this.caret.style.left = store.state.caretPos.x + "px";
@@ -77,7 +84,7 @@ export default class SourceSelector extends BaseComponent {
     hideCaret() {
         this.caret.style.display = 'none';
         //this.resetSelection();
-        console.log(this.caret.style.display);
+
     }
 
     renderSelections() {

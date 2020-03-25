@@ -21,7 +21,7 @@ interface IState {
   requestedSelection: { start: number, end: number; };
 
   selectedRects: DOMRect[];
-  caretPos: { x: number, y: number }
+  caretPos: { x: number, y: number; };
   input: {
     inputEvent?: InputEvent,
     text: string;
@@ -105,80 +105,108 @@ class Store {
     return this.state.src.text.slice(start, start + end);
   }
 
-  get selectionWithLineNum() {
-    const { start, end } = this.state.selection;
-    const text = this.state.src.text
-    let sline = 0, spos = 0, eline = 0, epos = 0
-    for (let i = 0; i < end; i++) {
-      if (i < start) {
-        if (text[i] === "\n") { sline++; spos = 0 }
-        else { spos++ }
+  getSelectionWithLineNum(text: string, sel: { start: number, end: number; }) {
+    let sline = 0, spos = 0, eline = 0, epos = 0;
+    for (let i = 0; i < sel.end; i++) {
+      if (i < sel.start) {
+        if (text[i] === "\n") { sline++; spos = 0; }
+        else { spos++; }
       }
-      if (i <= end) {
-        if (text[i] === "\n") { eline++; epos = 0 }
-        else { epos++ }
+      if (i <= sel.end) {
+        if (text[i] === "\n") { eline++; epos = 0; }
+        else { epos++; }
       }
     }
-    return { start: { linenum: sline, pos: spos }, end: { linenum: eline, pos: epos } }
+    return { start: { linenum: sline, pos: spos }, end: { linenum: eline, pos: epos } };
   }
+
+  get currentSelection() {
+    return this.getSelectionWithLineNum(this.state.src.text, this.state.selection);
+  }
+
+  get inputSelection() {
+    const input = this.state.input;
+    return this.getSelectionWithLineNum(input.text, input.selection);
+  }
+
+  // get selectionWithLineNum() {
+  //   const { start, end } = this.state.selection;
+  //   const text = this.state.src.text;
+  //   let sline = 0, spos = 0, eline = 0, epos = 0;
+  //   for (let i = 0; i < end; i++) {
+  //     if (i < start) {
+  //       if (text[i] === "\n") { sline++; spos = 0; }
+  //       else { spos++; }
+  //     }
+  //     if (i <= end) {
+  //       if (text[i] === "\n") { eline++; epos = 0; }
+  //       else { epos++; }
+  //     }
+  //   }
+  //   return { start: { linenum: sline, pos: spos }, end: { linenum: eline, pos: epos } };
+  // }
 
   get lines(): string[] {
     return this.state.src.text.split("\n");
   }
 
-  get prevSelectedLines(): { start: number; end: number; } {
-    let start = 0;
-    let end = 0;
-    const text = this.state.input.text;
-    const selection = this.state.input.selection;
-    for (let i = 0; i < selection.end; i++) {
-      if (text.charAt(i) == "\n") {
-        if (i <= selection.start) start++;
-        if (i <= selection.end) end++;
-      }
-    }
-    return { start, end };
-  }
+  // get prevSelectedLines(): { start: number; end: number; } {
+  //   let start = 0;
+  //   let end = 0;
+  //   const text = this.state.input.text;
+  //   const selection = this.state.input.selection;
+  //   console.log(text);
+  //   for (let i = 0; i < selection.end; i++) {
+  //     if (text.charAt(i) == "\n") {
+  //       if (i <= selection.start) start++;
+  //       if (i <= selection.end) end++;
+  //     }
+  //   }
+  //   return { start, end };
+  // }
 
-  get currentSelectedLines(): { start: number; end: number; } {
-    let start = 0;
-    let end = 0;
-    const text = this.state.src.text;
-    const selection = this.state.selection;
-    for (let i = 0; i < selection.end; i++) {
-      if (text.charAt(i) == "\n") {
-        if (i <= selection.start) start++;
-        if (i <= selection.end) end++;
-      }
-    }
-    return { start, end };
-  }
+  // get currentSelectedLines(): { start: number; end: number; } {
+  //   let start = 0;
+  //   let end = 0;
+  //   const text = this.state.src.text;
+  //   const selection = this.state.selection;
+  //   for (let i = 0; i < selection.end; i++) {
+  //     if (text.charAt(i) == "\n") {
+  //       if (i <= selection.start) start++;
+  //       if (i <= selection.end) end++;
+  //     }
+  //   }
+  //   return { start, end };
+  // }
 
   get currentLine(): string {
-    return this.state.src.text.split("\n")[this.currentSelectedLines.end];
+    const sel = this.getSelectionWithLineNum(this.state.src.text, this.state.selection);
+    return this.state.src.text.split("\n")[sel.end.linenum];
   }
 
-  get currentPos(): { line: number, char: number; } {
-    const selection = this.state.selection;
-    const text = this.state.src.text.slice(0, selection.end);
-    const lines = text.split("\n");
-    return { line: lines.length - 1, char: lines[lines.length - 1].length };
-  }
+  // get currentPos(): { line: number, char: number; } {
+  //   const selection = this.state.selection;
+  //   const text = this.state.src.text.slice(0, selection.end);
+  //   const lines = text.split("\n");
+  //   return { line: lines.length - 1, char: lines[lines.length - 1].length };
+  // }
 
-  get prevPos(): { line: number, char: number; } {
-    const selection = this.state.input.selection;
-    const text = this.state.input.text.slice(0, selection.end);
-    const lines = text.split("\n");
-    if (lines.length == 0) return { line: 0, char: 0 };
-    return { line: lines.length - 1, char: lines[lines.length - 1].length };
-  }
+  // get prevPos(): { line: number, char: number; } {
+  //   const selection = this.state.input.selection;
+  //   const text = this.state.input.text.slice(0, selection.end);
+  //   const lines = text.split("\n");
+  //   if (lines.length == 0) return { line: 0, char: 0 };
+  //   return { line: lines.length - 1, char: lines[lines.length - 1].length };
+  // }
 
   get prevLine(): string {
-    return this.state.src.text.split("\n")[this.currentSelectedLines.start - 1];
+    const current = this.currentSelection;
+    return this.state.src.text.split("\n")[current.start.linenum - 1];
   }
 
   get nextLine(): string {
-    return this.state.src.text.split("\n")[this.currentSelectedLines.end + 1];
+    const current = this.currentSelection;
+    return this.state.src.text.split("\n")[current.end.linenum + 1];
   }
 
   get isRegionSelected(): boolean {
@@ -202,7 +230,7 @@ class Store {
 
   @Mutation("requestedSrc")
   SET_REQUESTED_SRC(value: string) {
-    this.state.requestedSrc = value
+    this.state.requestedSrc = value;
   }
 
   @Mutation("src")
@@ -251,32 +279,32 @@ class Store {
 
   @Mutation("caretPos")
   SET_CARET_POS(x: number, y: number) {
-    this.state.caretPos = { x, y }
+    this.state.caretPos = { x, y };
   }
 
   @Mutation("compositionActive")
   SET_COMPOSITION_ACTIVE(value: boolean) {
-    this.state.compositionActive = value
+    this.state.compositionActive = value;
   }
 
   @Mutation("compositionText")
   SET_COMPOSITION_TEXT(value: string) {
-    this.state.compositionText = value
+    this.state.compositionText = value;
   }
 
   @Mutation("compositionRects")
   SET_COMPOSITION_RECTS(value: DOMRect[]) {
-    this.state.compositionRects = value
+    this.state.compositionRects = value;
   }
 
   @Mutation("keyboardEvent")
   SET_KEYBOARD_EVENT(value: KeyboardEvent | null) {
-    this.state.keyboardEvent = value
+    this.state.keyboardEvent = value;
   }
 
   @Mutation("proposedCaretPos")
   SET_PROPOSED_CARET_POS(value: number) {
-    this.state.proposedCaretPos = value
+    this.state.proposedCaretPos = value;
   }
 
   $trigger(state: StateName | StateName[]) {
