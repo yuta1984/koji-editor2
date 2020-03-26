@@ -47,6 +47,11 @@ export default class Display extends BaseComponent {
         e.preventDefault();
       }
     });
+
+    store.$watch('editorSize', () => {
+      const { width, height } = store.state.editorSize;
+      this.setSize(width, height);
+    });
   }
 
   get lines() {

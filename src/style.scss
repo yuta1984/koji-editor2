@@ -3,8 +3,6 @@ $editor-line-width: 20px;
 @import url(https://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
 
 @mixin editor {
-  width: 400px;
-  height: 400px;
   margin: 0;
   padding: 0;
   border: none;
@@ -19,14 +17,17 @@ $editor-line-width: 20px;
   }
 }
 
+.koji-editor {
+  position: absolute;
+}
+
 .koji-editor-textarea {
   @include editor();
   overflow-wrap: break-word;
   transform: rotate(90deg);
-  opacity: 0.3;
-  position: fixed;
-  top: 100px;
-  left: 100px;
+  transform-origin: left top;
+  opacity: 0.2;
+  position: absolute;
   z-index: 999999;
   line-height: $editor-line-width;
   overflow-y: scroll;
@@ -34,10 +35,8 @@ $editor-line-width: 20px;
 
 .koji-editor-display {
   @include editor();
-  top: 100px;
-  left: 100px;
   border: 1px solid rgb(180, 180, 180);
-  position: fixed;
+  position: absolute;
   writing-mode: vertical-rl;
   overflow-x: scroll;
   overflow-y: hidden;

@@ -5,17 +5,27 @@ import store from '../store';
 
 export default class Editor extends BaseComponent {
 
-    $el: HTMLElement
-
+    $el: HTMLElement;
 
     constructor(parentEl: HTMLElement, src: string) {
-        super()
-        this.$el = document.createElement("div")
-        this.$el.classList.add('koji-editor')
-        this.add(new HiddenTextArea())
-        this.add(new Display())
-        parentEl.appendChild(this.$el)
-        store.SET_REQUESTED_SRC(src)
+        super();
+        this.$el = document.createElement("div");
+        this.$el.classList.add('koji-editor');
+        this.add(new HiddenTextArea());
+        this.add(new Display());
+        parentEl.appendChild(this.$el);
+        parentEl.addEventListener("resize", () => this.resize());
+        this.resize();
+        store.SET_REQUESTED_SRC(src);
+    }
+
+    resize() {
+        const parent = this.$el.parentElement;
+        const width = parent?.clientWidth || 600;
+        const height = parent?.clientHeight || 600;
+        this.setSize(width, height);
+        console.log(width, height);
+        store.SET_EDITOR_SIZE(width, height);
     }
 
 

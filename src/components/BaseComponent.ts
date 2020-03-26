@@ -1,7 +1,7 @@
 export default abstract class BaseComponent {
 
     abstract $el: HTMLElement;
-    components: BaseComponent[] = []
+    components: BaseComponent[] = [];
 
     constructor() {
 
@@ -9,21 +9,26 @@ export default abstract class BaseComponent {
 
     observeEl(eventNames: string[], handler: (event: Event) => void) {
         for (let name in eventNames) {
-            this.$el.addEventListener(name, handler)
+            this.$el.addEventListener(name, handler);
         }
     }
 
     protected h(elemName: string, ...className: string[]): HTMLElement {
-        const elem = document.createElement(elemName)
+        const elem = document.createElement(elemName);
         for (let cls of className) {
-            elem.classList.add(cls)
+            elem.classList.add(cls);
         }
-        return elem
+        return elem;
     }
 
     add(comp: BaseComponent) {
-        this.components.push(comp)
-        this.$el.appendChild(comp.$el)
+        this.components.push(comp);
+        this.$el.appendChild(comp.$el);
+    }
+
+    setSize(width: number, height: number) {
+        this.$el.style.width = width + "px";
+        this.$el.style.height = height + "px";
     }
 
 }

@@ -15,7 +15,7 @@ export default class HiddenTextArea extends BaseComponent {
     this.observeResize();
     this.observeComposition();
     this.observeKeyEvent();
-    setTimeout(() => store.SET_EDITOR_SIZE(this.$el.clientWidth, this.$el.clientHeight), 100);
+    //setTimeout(() => store.SET_EDITOR_SIZE(this.$el.clientWidth, this.$el.clientHeight), 100);
 
     store.$watch('requestedSrc', () => {
       const text = store.state.requestedSrc;
@@ -27,6 +27,12 @@ export default class HiddenTextArea extends BaseComponent {
       const sel = store.state.requestedSelection;
       this.$el.selectionStart = sel.start;
       this.$el.selectionEnd = sel.end;
+    });
+
+    store.$watch('editorSize', () => {
+      const { width, height } = store.state.editorSize;
+      this.setSize(height, width);
+      this.$el.style.left = width + "px";
     });
   }
 
