@@ -4,12 +4,12 @@ $editor-line-width: 20px;
 
 @mixin editor {
   margin: 0;
-  padding: 0;
   border: none;
   font-size: 14px;
   font-family: "Noto Sans JP", sans-serif;
   word-break: break-all;
   word-wrap: break-word;
+  //box-sizing: border-box;
 }
 @keyframes blink {
   75% {
@@ -31,10 +31,12 @@ $editor-line-width: 20px;
   z-index: 999999;
   line-height: $editor-line-width;
   overflow-y: scroll;
+  box-sizing: border-box;
 }
 
 .koji-editor-display {
   @include editor();
+  box-sizing: border-box;
   border: 1px solid rgb(180, 180, 180);
   position: absolute;
   writing-mode: vertical-rl;
@@ -52,11 +54,13 @@ $editor-line-width: 20px;
     position: absolute;
   }
   .koji-editor-overlay {
+    box-sizing: border-box;
     position: absolute;
+    left: 0.1px;
     height: 100%;
+    border: none;
     min-width: 100%;
     writing-mode: vertical-rl;
-    position: relative;
     .koji-editor-caret {
       position: absolute;
       border-top: 1px solid black;
