@@ -32,6 +32,7 @@ $editor-line-width: 20px;
   line-height: $editor-line-width;
   overflow-y: scroll;
   box-sizing: border-box;
+  resize: none;
 }
 
 .koji-editor-display {
@@ -55,7 +56,6 @@ $editor-line-width: 20px;
   }
   .koji-editor-overlay {
     box-sizing: border-box;
-    position: absolute;
     left: 0.1px;
     height: 100%;
     border: none;
