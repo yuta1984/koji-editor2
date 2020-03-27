@@ -179,12 +179,13 @@ export default class Display extends BaseComponent {
     const lines = this.$el.getElementsByClassName('koji-editor-line');
     const line = lines[sel.start.linenum];
     const parentRect = this.srcPanel.getBoundingClientRect();
-    if (line.textContent) {
+    if (sel.start.pos === 0 && sel.end.pos == 0) {
+      const rect = line.getBoundingClientRect();
+      const offset = this.srcPanel.clientWidth - this.$el.clientWidth;
+      store.SET_CARET_POS(rect.x - parentRect.x - offset, rect.y - parentRect.y);
+    } else {
       const rect = this.createRelativeRect(line, sel.start.pos, sel.end.pos);
       store.SET_CARET_POS(rect.x, rect.y);
-    } else {
-      const rect = line.getBoundingClientRect();
-      store.SET_CARET_POS(rect.x - parentRect.x, rect.y - parentRect.y);
     }
   }
 
@@ -274,7 +275,6 @@ export default class Display extends BaseComponent {
   createRelativeRect(node: Node, start: number, end: number): DOMRect {
     // create range from selection position
     const range = document.createRange();
-    if (node.firstChild == null) throw Error;
     let count = 0;
     let startNode: Node = node;
     let endNode: Node = node;
@@ -301,10 +301,13 @@ export default class Display extends BaseComponent {
     if (!startNode || !endNode) throw Error('node not found');
     range.setStart(startNode, startOffset);
     range.setEnd(endNode, endOffset);
-    // create rect from the range
+    // create rect from the range   
     const parentRect = this.srcPanel.getBoundingClientRect();
     const rect = range.getBoundingClientRect();
-    rect.x = rect.x - parentRect.x;
+    console.log(rect, range);
+    const srcPanelWidth = this.srcPanel.clientWidth;
+    const offset = srcPanelWidth - this.$el.clientWidth;
+    rect.x = rect.x - parentRect.x - offset;
     rect.y = rect.y - parentRect.y;
     range.detach();
     return rect;
