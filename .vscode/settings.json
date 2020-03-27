@@ -1,0 +1,8 @@
+{
+    "editor.formatOnSave": true,
+    "prettier.singleQuote": true,
+    "javascript.format.insertSpaceAfterConstructor": true,
+    "prettier.configPath": ".prettierrc",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.prettierPath": "./node_modules/.bin/prettier"
+}
