@@ -7,7 +7,7 @@ export default class Editor extends BaseComponent {
 
     $el: HTMLElement;
 
-    constructor(parentEl: HTMLElement, src: string) {
+    constructor(parentEl: HTMLElement, src = "") {
         super();
         this.$el = document.createElement("div");
         this.$el.classList.add('koji-editor');
