@@ -1,6 +1,6 @@
-import BaseComponent from "./BaseComponent";
-import store from "../store";
-import { Token } from "../types";
+import BaseComponent from './BaseComponent';
+import store from '../store';
+import { Token } from '../types';
 import KojiTokenizer from '../tokenizers/KojiTokenizer';
 import Overlay from './Overlay';
 import { start } from 'repl';
@@ -19,16 +19,14 @@ export default class Display extends BaseComponent {
 
     this.add(new Overlay());
 
-    store.$watch("src", () => this.onSrcChange());
+    store.$watch('src', () => this.onSrcChange());
     store.$watch(['selection', 'src', 'focus'], () => {
       this.updateSelecttionRects();
       this.updateCaretPos();
     });
     store.$watch('scroll', () => {
       const offset =
-        this.$el.scrollWidth -
-        this.$el.clientWidth -
-        store.state.scroll;
+        this.$el.scrollWidth - this.$el.clientWidth - store.state.scroll;
       this.$el.scrollTo(offset, 0);
     });
     // store.$watch('compositionActive', () => {
@@ -58,41 +56,35 @@ export default class Display extends BaseComponent {
     return this.$el.getElementsByClassName('koji-editor-line');
   }
 
-  private proposeSelection(e: KeyboardEvent): { start: number, end: number; } {
+  private proposeSelection(e: KeyboardEvent): { start: number; end: number } {
     const text = store.state.src.text;
     const sel = store.currentSelection;
     const { start, end } = store.state.selection;
     switch (e.key) {
       case 'ArrowUp':
         if (start > 0) {
-          return e.shiftKey ? { start: start - 1, end } : { start: start - 1, end: start - 1 };
+          return e.shiftKey
+            ? { start: start - 1, end }
+            : { start: start - 1, end: start - 1 };
         }
         break;
       case 'ArrowDown':
         if (end < text.length) {
-          return e.shiftKey ? { start, end: end + 1 } : { start: end + 1, end: end + 1 };
+          return e.shiftKey
+            ? { start, end: end + 1 }
+            : { start: end + 1, end: end + 1 };
         }
       case 'ArrowRight':
-        const prevLine = store.prevLine;
-        let rightPos = 0;
-        if (prevLine === undefined) return { start, end };
-        if (sel.start.pos <= prevLine.length) {
-          rightPos = this.inlinePosToAbsolutePos(sel.start.linenum - 1, sel.start.pos);
-        } else {
-          rightPos = start - sel.end.pos - 1;
-        }
-        return e.shiftKey ? { start: rightPos, end } : { start: rightPos, end: rightPos };
+        const nextPosRight = this.proposeNextCaretPos('right');
+        return e.shiftKey
+          ? { start: nextPosRight, end }
+          : { start: nextPosRight, end: nextPosRight };
         break;
       case 'ArrowLeft':
-        const nextLine = store.nextLine;
-        let leftPos = 0;
-        if (nextLine === undefined) return { start, end };
-        if (sel.end.pos <= nextLine.length) {
-          leftPos = this.inlinePosToAbsolutePos(sel.end.linenum + 1, sel.end.pos);
-        } else {
-          leftPos = this.inlinePosToAbsolutePos(sel.end.linenum + 1, nextLine.length);
-        }
-        return e.shiftKey ? { start, end: leftPos } : { start: leftPos, end: leftPos };
+        const nextPosLeft = this.proposeNextCaretPos('left');
+        return e.shiftKey
+          ? { start, end: nextPosLeft }
+          : { start: nextPosLeft, end: nextPosLeft };
         break;
       default:
         break;
@@ -104,39 +96,45 @@ export default class Display extends BaseComponent {
   private inlinePosToAbsolutePos(lineNum: number, pos: number): number {
     const text = store.state.src.text;
     let abspos = 0;
-    text.split("\n").slice(0, lineNum).forEach((l) => abspos += l.length + 1);
+    text
+      .split('\n')
+      .slice(0, lineNum)
+      .forEach(l => (abspos += l.length + 1));
     abspos += pos;
     return abspos;
-  }
-
-  resize(width: number, height: number) {
-    this.$el.style.width = width + "px";
-    this.$el.style.height = height + "px";
   }
 
   renderLine(text: string): HTMLElement {
     const tokenizer = new KojiTokenizer(text);
     const tokens = tokenizer.tokenize();
-    let html = tokens.map(t => `<span class="token ${t.type}">${t.value}</span>`).join('');
+    let html = tokens
+      .map(t => {
+        const chars = this.addCharSpans(t.value);
+        return `<span class="token ${t.type}">${chars}</span>`;
+      })
+      .join('');
     html = this.replaceSymbols(html);
-    html += '<span class="koji-editor-lb"></span>';
+    html += '<span class="koji-editor-lb char"> </span>';
     const lineElem = this.h('div', 'koji-editor-line');
     lineElem.innerHTML = html;
     return lineElem;
   }
 
   private addCharSpans(text: string): string {
-    const fill = "</span><span class='char'>";
-    text = text.split('').join(fill);
-    return text.slice(8, text.length - fill.length - 1);
+    return text
+      .split('')
+      .map(c => `<span class="char">${c}</span>`)
+      .join('');
   }
 
   private replaceSymbols(text: string): string {
-    return text
-      .replace(/　/g, '<span class="koji-editor-white-space">□</span>');
+    return text.replace(
+      /　/g,
+      '<span class="koji-editor-white-space">□</span>'
+    );
   }
 
-  lineAt(num: number) {
+  private lineAt(num: number) {
     return this.srcPanel.childNodes.item(num);
   }
 
@@ -167,65 +165,54 @@ export default class Display extends BaseComponent {
   }
 
   renderAll() {
-    this.srcPanel.innerHTML = "";
-    store.state.src.text.split("\n").forEach((l) => {
+    this.srcPanel.innerHTML = '';
+    store.state.src.text.split('\n').forEach(l => {
       const line = this.renderLine(l);
       this.srcPanel.appendChild(line);
     });
   }
 
+  private getCharElemsAt({
+    start,
+    end
+  }: {
+    start: number;
+    end: number;
+  }): Element[] {
+    const chars = this.srcPanel.getElementsByClassName('char');
+    return Array.from(chars).slice(start, end);
+  }
+
   updateCaretPos() {
-    const sel = store.currentSelection;
-    const lines = this.$el.getElementsByClassName('koji-editor-line');
-    const line = lines[sel.start.linenum];
-    const parentRect = this.srcPanel.getBoundingClientRect();
-    if (sel.start.pos === 0 && sel.end.pos == 0) {
-      const rect = line.getBoundingClientRect();
-      const offset = this.srcPanel.clientWidth - this.$el.clientWidth;
-      store.SET_CARET_POS(rect.x - parentRect.x - offset, rect.y - parentRect.y);
-    } else {
-      const rect = this.createRelativeRect(line, sel.start.pos, sel.end.pos);
-      store.SET_CARET_POS(rect.x, rect.y);
-    }
+    const { start } = store.state.selection;
+    const charElem = this.getCharElemsAt({ start, end: start + 1 })[0];
+    const rect = this.createRelativeRect(charElem);
+    store.SET_CARET_POS(rect.x, rect.y);
   }
 
   updateSelecttionRects() {
-    const rects: DOMRect[] = [];
-    const sel = store.currentSelection;
-    const lines = this.$el.getElementsByClassName('koji-editor-line');
-    // when selection is within single line
-    if (sel.start.linenum == sel.end.linenum) {
-      const line = lines[sel.start.linenum];
-      if (line.textContent) {
-        const rect = this.createRelativeRect(line, sel.start.pos, sel.end.pos);
-        rects.push(rect);
-      }
-    } else {
-      // when selection has multiple lines
-      const head = lines[sel.start.linenum];
-      const tail = lines[sel.end.linenum];
-      if (head.textContent)
-        rects.push(this.createRelativeRect(head, sel.start.pos, head.textContent.length));
-      if (tail.textContent)
-        rects.push(this.createRelativeRect(tail, 0, sel.end.pos));
-      // lines between head and tail
-      for (let i = sel.start.linenum + 1; i < sel.end.linenum; i++) {
-        const line = lines[i];
-        if (line.textContent) {
-          rects.push(this.createRelativeRect(line, 0, line.textContent.length));
-        }
-      }
-    }
+    const { start, end } = store.state.selection;
+    //const rects: DOMRect[] = [];
+    const selected = this.getCharElemsAt({ start, end });
+    const parentRect = this.srcPanel.getBoundingClientRect();
+    const srcPanelWidth = this.srcPanel.clientWidth;
+    const offset = srcPanelWidth - this.$el.clientWidth;
+    const rects = selected.map(c => {
+      const rect = c.getBoundingClientRect();
+      rect.x = rect.x - parentRect.x - offset;
+      rect.y = rect.y - parentRect.y;
+      return rect;
+    });
     store.SET_SELETECTED_RECTS(rects);
   }
 
-  getLinePos(pos: number): { pos: number, lineNum: number; } {
+  absolutePosToInlinePos(pos: number): { pos: number; lineNum: number } {
     const text = store.state.src.text;
     let lineNum = 0;
     let inlinePos = 0;
     for (let i = 0; i < text.length; i++) {
       if (i == pos) return { pos: inlinePos, lineNum: lineNum };
-      if (text[i] === "\n") {
+      if (text[i] === '\n') {
         lineNum++;
         inlinePos = 0;
       } else {
@@ -235,82 +222,86 @@ export default class Display extends BaseComponent {
     return { pos: inlinePos, lineNum: lineNum };
   }
 
-  selectionToRects(start: number, end: number) {
-    const rects: DOMRect[] = [];
-    const lines = this.lines;
-    const sLinePos = this.getLinePos(start);
-    const eLinePos = this.getLinePos(end);
-    // single line
-    if (sLinePos.lineNum == eLinePos.lineNum) {
-      if (sLinePos.pos == eLinePos.pos) return [];
-      const line = lines[sLinePos.lineNum];
-      const rect = this.createRelativeRect(line, sLinePos.pos, eLinePos.pos);
-      rects.push(rect);
-    } else {
-      // multiline
-      const headLine = lines[sLinePos.lineNum];
-      const headRect = this.createRelativeRect(headLine, sLinePos.pos, headLine.textContent?.length || 0);
-      const tailLine = lines[eLinePos.lineNum];
-      const tailRect = this.createRelativeRect(tailLine, 0, eLinePos.pos);
-      rects.push(headRect);
-      rects.push(tailRect);
-      for (let i = sLinePos.lineNum + 1; i < eLinePos.lineNum; i++) {
-        let line = lines[i];
-        let rect = this.createRelativeRect(line, 0, line.textContent?.length || 0);
-        rects.push(rect);
-      }
-    }
-    return rects;
-  }
-
-  private walkDOM(node: Node | null, func: (n: Node | null) => void) {
-    func(node);
-    node = node ? node.firstChild : null;
-    while (node) {
-      this.walkDOM(node, func);
-      node = node.nextSibling;
-    }
-  }
-
-  createRelativeRect(node: Node, start: number, end: number): DOMRect {
-    // create range from selection position
-    const range = document.createRange();
-    let count = 0;
-    let startNode: Node = node;
-    let endNode: Node = node;
-    let startOffset = 0;
-    let endOffset = 0;
-    this.walkDOM(node, (n) => {
-      if (n && n.nodeType == Node.TEXT_NODE && n.textContent) {
-        const chars = n.textContent.split('');
-        let offset = 0;
-        for (let i = 0; i < chars.length; i++) {
-          count++;
-          offset++;
-          if (count === start) {
-            startNode = n;
-            startOffset = offset;
-          }
-          if (count === end) {
-            endNode = n;
-            endOffset = offset;
-          }
-        }
-      }
-    });
-    if (!startNode || !endNode) throw Error('node not found');
-    range.setStart(startNode, startOffset);
-    range.setEnd(endNode, endOffset);
-    // create rect from the range   
+  createRelativeRect(elem: Element): DOMRect {
+    const rect = elem.getBoundingClientRect();
     const parentRect = this.srcPanel.getBoundingClientRect();
-    const rect = range.getBoundingClientRect();
-    console.log(rect, range);
     const srcPanelWidth = this.srcPanel.clientWidth;
     const offset = srcPanelWidth - this.$el.clientWidth;
     rect.x = rect.x - parentRect.x - offset;
     rect.y = rect.y - parentRect.y;
-    range.detach();
     return rect;
+  }
+
+  private proposeNextCaretPos(direction: 'right' | 'left'): number {
+    type CaretPos = {
+      lineNum: number;
+      pos: number;
+      left: number;
+      top: number;
+    };
+    const sel = store.currentSelection;
+    const caret = document.getElementsByClassName('koji-editor-caret')[0];
+    let originRect = caret.getBoundingClientRect();
+    // if caret is not shown
+    if (store.isRegionSelected) {
+      const selected = this.getCharElemsAt(store.state.selection);
+      originRect =
+        direction == 'right'
+          ? selected[0].getBoundingClientRect()
+          : selected[selected.length - 1].getBoundingClientRect();
+    }
+    const currLine =
+      direction == 'right'
+        ? this.lines[sel.start.linenum]
+        : this.lines[sel.end.linenum];
+    const nextLineNum =
+      direction == 'right' ? sel.start.linenum - 1 : sel.end.linenum + 1;
+    const nextLine = this.lines[nextLineNum];
+    // do nothing if prev line does not exist
+    if (!nextLine) return store.state.selection.start;
+    const currChars = currLine.getElementsByClassName('char');
+    const prevChars = nextLine.getElementsByClassName('char');
+    const lineWidth = 20;
+    const candidates: CaretPos[] = [];
+    // add chars in current line
+    for (let i = 0; i < currChars.length; i++) {
+      const rect = currChars[i].getBoundingClientRect();
+      candidates.push({
+        lineNum: sel.start.linenum,
+        pos: i,
+        left: rect.left,
+        top: rect.top
+      });
+    }
+    // add chars in previous line
+    for (let i = 0; i < prevChars.length; i++) {
+      const rect = prevChars[i].getBoundingClientRect();
+      candidates.push({
+        lineNum: nextLineNum,
+        pos: i,
+        left: rect.left,
+        top: rect.top
+      });
+    }
+    // find the closest char in visually next line
+    let closestDistY = Infinity;
+    let candidate: CaretPos | null = null;
+    candidates.forEach(c => {
+      const distX =
+        direction == 'right'
+          ? c.left - originRect.left
+          : originRect.left - c.left;
+      const distY = Math.abs(c.top - originRect.top);
+      if (distX == lineWidth && distY < closestDistY) {
+        candidate = c;
+        closestDistY = distY;
+      }
+    });
+    if (candidate === null) {
+      throw new Error();
+    } else {
+      return this.inlinePosToAbsolutePos(candidate!.lineNum, candidate!.pos);
+    }
   }
 
   onSrcChange() {
@@ -319,11 +310,11 @@ export default class Display extends BaseComponent {
     const startLine = inputSelection.start.linenum;
     const endLine = inputSelection.end.linenum;
     switch (store.state.input.inputEvent.inputType) {
-      case "insertText":
+      case 'insertText':
         this.deleteLines(startLine, endLine);
         this.insertLineAt(store.currentLine, endLine);
         break;
-      case "insertLineBreak":
+      case 'insertLineBreak':
         const currentSelection = store.currentSelection;
         const cStartLine = currentSelection.start.linenum;
         const cendLine = currentSelection.end.linenum;
@@ -333,66 +324,69 @@ export default class Display extends BaseComponent {
         this.insertLineAt(line1, endLine);
         this.insertLineAt(line2, endLine + 1);
         break;
-      case "insertCompositionText":
+      case 'insertCompositionText':
         this.deleteLines(startLine, endLine);
         this.insertLineAt(store.currentLine, endLine);
         break;
-      case "insertFromPaste":
+      case 'insertFromPaste':
         this.renderAll();
         break;
-      case "insertFromPasteAsQuotation":
+      case 'insertFromPasteAsQuotation':
         this.renderAll();
         break;
-      case "insertFromDrop":
+      case 'insertFromDrop':
         this.renderAll();
         break;
-      case "insertReplacementText":
+      case 'insertReplacementText':
         this.renderAll();
         break;
-      case "insertFromYank":
+      case 'insertFromYank':
         this.renderAll();
         break;
-      case "deleteWordBackward":
+      case 'deleteWordBackward':
         this.deleteLines(startLine, endLine);
         this.insertLineAt(store.currentLine, endLine);
         break;
-      case "deleteWordForward":
-        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(startLine, endLine);
+      case 'deleteWordForward':
+        if (store.nextChar == '\n' && !store.inputHasSelection)
+          this.deleteLines(startLine, endLine);
         this.deleteLines(startLine, endLine);
         this.insertLineAt(store.currentLine, endLine);
         break;
-      case "deleteSoftLineBackward":
+      case 'deleteSoftLineBackward':
         this.deleteLines(startLine, endLine);
         this.insertLineAt(store.currentLine, endLine);
         break;
-      case "deleteSoftLineForward":
-        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(startLine, endLine);
+      case 'deleteSoftLineForward':
+        if (store.nextChar == '\n' && !store.inputHasSelection)
+          this.deleteLines(startLine, endLine);
         this.deleteLines(startLine, endLine);
         this.insertLineAt(store.currentLine, endLine);
         break;
-      case "deleteEntireSoftLine":
+      case 'deleteEntireSoftLine':
         this.deleteLines(startLine, endLine);
         this.insertLineAt(store.currentLine, endLine);
         break;
-      case "deleteHardLineBackward":
+      case 'deleteHardLineBackward':
         this.deleteLines(startLine, endLine);
         this.insertLineAt(store.currentLine, endLine);
         break;
-      case "deleteHardLineForward":
-        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(startLine, endLine);
+      case 'deleteHardLineForward':
+        if (store.nextChar == '\n' && !store.inputHasSelection)
+          this.deleteLines(startLine, endLine);
         this.deleteLines(startLine, endLine);
         this.insertLineAt(store.currentLine, endLine);
         break;
-      case "deleteByDrag":
+      case 'deleteByDrag':
         this.renderAll();
         break;
-      case "deleteByCut":
+      case 'deleteByCut':
         this.renderAll();
         break;
-      case "deleteContent":
+      case 'deleteContent':
         this.renderAll();
         break;
-      case "deleteContentBackward":
+      case 'deleteContentBackward':
         if (inputSelection.start.pos == 0) {
           this.deleteLines(startLine - 1, endLine);
           this.insertLineAt(store.currentLine, startLine - 1);
@@ -402,15 +396,16 @@ export default class Display extends BaseComponent {
         }
 
         break;
-      case "deleteContentForward":
-        if (store.nextChar == "\n" && !store.inputHasSelection) this.deleteLines(startLine, endLine);
+      case 'deleteContentForward':
+        if (store.nextChar == '\n' && !store.inputHasSelection)
+          this.deleteLines(startLine, endLine);
         this.deleteLines(startLine, endLine);
         this.insertLineAt(store.currentLine, endLine);
         break;
-      case "historyUndo":
+      case 'historyUndo':
         this.renderAll();
         break;
-      case "historyRedo":
+      case 'historyRedo':
         this.renderAll();
         break;
     }
