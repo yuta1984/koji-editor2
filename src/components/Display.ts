@@ -114,7 +114,7 @@ export default class Display extends BaseComponent {
       })
       .join('');
     html = this.replaceSymbols(html);
-    html += '<span class="koji-editor-lb char"> </span>';
+    html += '<span class="koji-editor-lb char"></span>';
     const lineElem = this.h('div', 'koji-editor-line');
     lineElem.innerHTML = html;
     return lineElem;
@@ -179,7 +179,7 @@ export default class Display extends BaseComponent {
     start: number;
     end: number;
   }): Element[] {
-    const chars = this.srcPanel.getElementsByClassName('char');
+    const chars = this.srcPanel.querySelectorAll('.char');
     return Array.from(chars).slice(start, end);
   }
 
@@ -261,7 +261,7 @@ export default class Display extends BaseComponent {
     if (!nextLine) return store.state.selection.start;
     const currChars = currLine.getElementsByClassName('char');
     const prevChars = nextLine.getElementsByClassName('char');
-    const lineWidth = 20;
+    const lineWidth = 22;
     const candidates: CaretPos[] = [];
     // add chars in current line
     for (let i = 0; i < currChars.length; i++) {

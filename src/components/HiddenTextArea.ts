@@ -1,13 +1,13 @@
-import store from "../store";
-import BaseComponent from "./BaseComponent";
+import store from '../store';
+import BaseComponent from './BaseComponent';
 
 export default class HiddenTextArea extends BaseComponent {
   $el: HTMLTextAreaElement;
 
   constructor() {
     super();
-    this.$el = document.createElement("textarea");
-    this.$el.classList.add("koji-editor-textarea");
+    this.$el = document.createElement('textarea');
+    this.$el.classList.add('koji-editor-textarea');
     this.observeFocus();
     this.observeInput();
     this.observeSelection();
@@ -32,24 +32,25 @@ export default class HiddenTextArea extends BaseComponent {
     store.$watch('editorSize', () => {
       const { width, height } = store.state.editorSize;
       this.setSize(height, width);
-      this.$el.style.left = width + "px";
+      this.$el.style.left = width + 'px';
     });
   }
 
   observeFocus() {
-    this.$el.addEventListener("focus", () => {
+    this.$el.addEventListener('focus', () => {
       store.SET_FOCUS(true);
     });
-    this.$el.addEventListener("blur", () => {
-      console.log("blur");
+    this.$el.addEventListener('blur', () => {
       store.SET_FOCUS(false);
     });
   }
 
   observeInput() {
-    this.$el.addEventListener("input", (event: Event) => {
+    this.$el.addEventListener('input', (event: Event) => {
       store.SET_INPUT({
-        srcText: this.$el.value, inputEvent: <InputEvent>event, selection: {
+        srcText: this.$el.value,
+        inputEvent: <InputEvent>event,
+        selection: {
           start: this.$el.selectionStart,
           end: this.$el.selectionEnd
         }
@@ -63,52 +64,72 @@ export default class HiddenTextArea extends BaseComponent {
   }
 
   observeSelection() {
-    document.addEventListener("selectionchange", () => {
+    // events that can chenge selection
+    const eventTypes = [
+      'keydown',
+      'keypress',
+      'keyup',
+      'mousedown',
+      'touchstart',
+      'input',
+      'paste',
+      'cut',
+      'mousemove',
+      'select',
+      'selectstart',
+      'click'
+    ];
+    // update store if selection is changed
+    const checkSelection = (e: Event) => {
       const activeElement = document.activeElement;
       if (activeElement != this.$el) return;
+      console.log(this.$el.selectionStart);
       if (
         this.$el.selectionStart !== store.state.selection.start ||
         this.$el.selectionEnd !== store.state.selection.end
       ) {
+        console.log('update', e.type);
         store.SET_SELECTION({
           start: this.$el.selectionStart,
           end: this.$el.selectionEnd
         });
       }
+    };
+    eventTypes.forEach(e => {
+      this.$el.addEventListener(e, checkSelection);
     });
   }
 
   observeScroll() {
-    this.$el.addEventListener("scroll", event => {
+    this.$el.addEventListener('scroll', event => {
       //store.SET_SCROLL_WIDTH(this.$el.scrollHeight);
       store.SET_SCROLL(this.$el.scrollTop);
     });
   }
 
   observeResize() {
-    this.$el.addEventListener("resize", event => {
+    this.$el.addEventListener('resize', event => {
       store.SET_SCROLL(this.$el.scrollTop);
     });
   }
 
   observeComposition() {
-    this.$el.addEventListener('compositionstart', (e) => {
+    this.$el.addEventListener('compositionstart', e => {
       store.SET_COMPOSITION_ACTIVE(true);
       store.SET_COMPOSITION_RECTS([]);
     });
     this.$el.addEventListener('compositionupdate', (e: any) => {
       store.SET_COMPOSITION_TEXT(e.data);
       store.SET_COMPOSITION_ACTIVE(true);
-
     });
-    this.$el.addEventListener('compositionend', (e) => {
+    this.$el.addEventListener('compositionend', e => {
       store.SET_COMPOSITION_ACTIVE(false);
       store.SET_COMPOSITION_RECTS([]);
     });
   }
 
   observeKeyEvent() {
-    this.$el.addEventListener("keydown", (e) => {
+    this.$el.addEventListener('keydown', e => {
       store.SET_KEYBOARD_EVENT(e);
     });
   }
