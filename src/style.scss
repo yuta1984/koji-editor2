@@ -6,7 +6,7 @@ $editor-line-width: 20px;
   margin: 0;
   border: none;
   font-size: 14px;
-  font-family: "Noto Sans JP", sans-serif;
+  font-family: 'Noto Sans JP', sans-serif;
   word-break: break-all;
   word-wrap: break-word;
   //box-sizing: border-box;
@@ -47,12 +47,11 @@ $editor-line-width: 20px;
   .koji-editor-white-space {
     color: #dcdcdc;
   }
-  .koji-editor-lb::before {
-    content: "\21B5";
+  .koji-editor-lb::after {
+    content: '\21B5';
     color: #a9d1ff;
     font-size: 12px;
     margin-top: 2px;
-    position: absolute;
   }
   .koji-editor-overlay {
     box-sizing: border-box;
