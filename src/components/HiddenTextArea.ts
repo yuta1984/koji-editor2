@@ -83,12 +83,10 @@ export default class HiddenTextArea extends BaseComponent {
     const checkSelection = (e: Event) => {
       const activeElement = document.activeElement;
       if (activeElement != this.$el) return;
-      console.log(this.$el.selectionStart);
       if (
         this.$el.selectionStart !== store.state.selection.start ||
         this.$el.selectionEnd !== store.state.selection.end
       ) {
-        console.log('update', e.type);
         store.SET_SELECTION({
           start: this.$el.selectionStart,
           end: this.$el.selectionEnd
