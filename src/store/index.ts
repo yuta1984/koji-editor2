@@ -1,10 +1,10 @@
-import { isArray } from "util";
+import { isArray } from 'util';
 
 type StateName = keyof IState;
 function Mutation(state: StateName | StateName[]) {
-  return function (target: any, name: string, descriptor: PropertyDescriptor) {
+  return function(target: any, name: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
-    descriptor.value = function (this: any) {
+    descriptor.value = function(this: any) {
       this.prevState = this.state;
       method.apply(this, arguments);
       this.$trigger(state);
@@ -13,19 +13,20 @@ function Mutation(state: StateName | StateName[]) {
 }
 
 interface IState {
+  initialized: boolean;
   src: {
     text: string;
   };
   requestedSrc: string;
-  selection: { start: number, end: number; };
-  requestedSelection: { start: number, end: number; };
+  selection: { start: number; end: number };
+  requestedSelection: { start: number; end: number };
 
   selectedRects: DOMRect[];
-  caretPos: { x: number, y: number; };
+  caretPos: { x: number; y: number };
   input: {
-    inputEvent?: InputEvent,
+    inputEvent?: InputEvent;
     text: string;
-    selection: { start: number, end: number; };
+    selection: { start: number; end: number };
   };
   focus: boolean;
   editorSize: {
@@ -46,32 +47,33 @@ export type StateKey = keyof IState;
 
 class Store {
   state: IState = {
+    initialized: false,
     src: {
-      text: ""
+      text: '',
     },
-    requestedSrc: "",
+    requestedSrc: '',
     selection: {
       start: 0,
-      end: 0
+      end: 0,
     },
     requestedSelection: {
       start: 0,
-      end: 0
+      end: 0,
     },
     selectedRects: [],
     caretPos: { x: 0, y: 0 },
     input: {
-      text: "",
+      text: '',
       selection: {
         start: 0,
-        end: 0
+        end: 0,
       },
     },
     scroll: 0,
     scrollWidth: 0,
     editorSize: {
       width: 0,
-      height: 0
+      height: 0,
     },
     focus: false,
     compositionActive: false,
@@ -79,9 +81,10 @@ class Store {
     compositionRects: [],
 
     keyboardEvent: null,
-    proposedCaretPos: 0
+    proposedCaretPos: 0,
   };
   handlers: { [P in StateName]: Function[] } = {
+    initialized: [],
     src: [],
     requestedSrc: [],
     selection: [],
@@ -97,7 +100,7 @@ class Store {
     compositionText: [],
     compositionRects: [],
     keyboardEvent: [],
-    proposedCaretPos: []
+    proposedCaretPos: [],
   };
 
   get selectedText() {
@@ -105,16 +108,27 @@ class Store {
     return this.state.src.text.slice(start, start + end);
   }
 
-  getSelectionWithLineNum(text: string, sel: { start: number, end: number; }) {
-    let sline = 0, spos = 0, eline = 0, epos = 0;
+  getSelectionWithLineNum(text: string, sel: { start: number; end: number }) {
+    let sline = 0,
+      spos = 0,
+      eline = 0,
+      epos = 0;
     for (let i = 0; i < sel.end; i++) {
       if (i < sel.start) {
-        if (text[i] === "\n") { sline++; spos = 0; }
-        else { spos++; }
+        if (text[i] === '\n') {
+          sline++;
+          spos = 0;
+        } else {
+          spos++;
+        }
       }
       if (i <= sel.end) {
-        if (text[i] === "\n") { eline++; epos = 0; }
-        else { epos++; }
+        if (text[i] === '\n') {
+          eline++;
+          epos = 0;
+        } else {
+          epos++;
+        }
       }
     }
     return { start: { linenum: sline, pos: spos }, end: { linenum: eline, pos: epos } };
@@ -147,7 +161,7 @@ class Store {
   // }
 
   get lines(): string[] {
-    return this.state.src.text.split("\n");
+    return this.state.src.text.split('\n');
   }
 
   // get prevSelectedLines(): { start: number; end: number; } {
@@ -181,7 +195,7 @@ class Store {
 
   get currentLine(): string {
     const sel = this.getSelectionWithLineNum(this.state.src.text, this.state.selection);
-    return this.state.src.text.split("\n")[sel.end.linenum];
+    return this.state.src.text.split('\n')[sel.end.linenum];
   }
 
   // get currentPos(): { line: number, char: number; } {
@@ -201,12 +215,12 @@ class Store {
 
   get prevLine(): string {
     const current = this.currentSelection;
-    return this.state.src.text.split("\n")[current.start.linenum - 1];
+    return this.state.src.text.split('\n')[current.start.linenum - 1];
   }
 
   get nextLine(): string {
     const current = this.currentSelection;
-    return this.state.src.text.split("\n")[current.end.linenum + 1];
+    return this.state.src.text.split('\n')[current.end.linenum + 1];
   }
 
   get isRegionSelected(): boolean {
@@ -228,13 +242,22 @@ class Store {
     return this.state.input.text[idx - 1];
   }
 
-  @Mutation("requestedSrc")
+  @Mutation('initialized')
+  SET_INITIALIZED(value: boolean) {
+    this.state.initialized = value;
+  }
+
+  @Mutation('requestedSrc')
   SET_REQUESTED_SRC(value: string) {
     this.state.requestedSrc = value;
   }
 
-  @Mutation("src")
-  SET_INPUT(payload: { srcText: string, inputEvent?: InputEvent, selection: { start: number; end: number; }; }) {
+  @Mutation('src')
+  SET_INPUT(payload: {
+    srcText: string;
+    inputEvent?: InputEvent;
+    selection: { start: number; end: number };
+  }) {
     this.state.input.inputEvent = payload.inputEvent;
     this.state.input.selection = this.state.selection;
     this.state.input.text = this.state.src.text;
@@ -242,67 +265,67 @@ class Store {
     this.state.selection = payload.selection;
   }
 
-  @Mutation("focus")
+  @Mutation('focus')
   SET_FOCUS(value: boolean) {
     this.state.focus = value;
   }
 
-  @Mutation("selection")
-  SET_SELECTION(sel: { start: number; end: number; }) {
+  @Mutation('selection')
+  SET_SELECTION(sel: { start: number; end: number }) {
     this.state.selection = sel;
   }
 
-  @Mutation("requestedSelection")
-  SET_REQUESTED_SELECTION(sel: { start: number; end: number; }) {
+  @Mutation('requestedSelection')
+  SET_REQUESTED_SELECTION(sel: { start: number; end: number }) {
     this.state.requestedSelection = sel;
   }
 
-  @Mutation("selectedRects")
+  @Mutation('selectedRects')
   SET_SELETECTED_RECTS(value: DOMRect[]) {
     this.state.selectedRects = value;
   }
 
-  @Mutation("scroll")
+  @Mutation('scroll')
   SET_SCROLL(value: number) {
     this.state.scroll = value;
   }
 
-  @Mutation("scrollWidth")
+  @Mutation('scrollWidth')
   SET_SCROLL_WIDTH(value: number) {
     this.state.scrollWidth = value;
   }
 
-  @Mutation("editorSize")
+  @Mutation('editorSize')
   SET_EDITOR_SIZE(width: number, height: number) {
     this.state.editorSize = { width, height };
   }
 
-  @Mutation("caretPos")
+  @Mutation('caretPos')
   SET_CARET_POS(x: number, y: number) {
     this.state.caretPos = { x, y };
   }
 
-  @Mutation("compositionActive")
+  @Mutation('compositionActive')
   SET_COMPOSITION_ACTIVE(value: boolean) {
     this.state.compositionActive = value;
   }
 
-  @Mutation("compositionText")
+  @Mutation('compositionText')
   SET_COMPOSITION_TEXT(value: string) {
     this.state.compositionText = value;
   }
 
-  @Mutation("compositionRects")
+  @Mutation('compositionRects')
   SET_COMPOSITION_RECTS(value: DOMRect[]) {
     this.state.compositionRects = value;
   }
 
-  @Mutation("keyboardEvent")
+  @Mutation('keyboardEvent')
   SET_KEYBOARD_EVENT(value: KeyboardEvent | null) {
     this.state.keyboardEvent = value;
   }
 
-  @Mutation("proposedCaretPos")
+  @Mutation('proposedCaretPos')
   SET_PROPOSED_CARET_POS(value: number) {
     this.state.proposedCaretPos = value;
   }
@@ -310,12 +333,12 @@ class Store {
   $trigger(state: StateName | StateName[]) {
     if (isArray(state)) {
       state.forEach(s => {
-        this.handlers[s].forEach(function (this: any, h) {
+        this.handlers[s].forEach(function(this: any, h) {
           h.apply(this);
         });
       });
     } else {
-      this.handlers[state].forEach(function (this: any, h) {
+      this.handlers[state].forEach(function(this: any, h) {
         h.apply(this);
       });
     }

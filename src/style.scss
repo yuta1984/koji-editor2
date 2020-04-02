@@ -1,15 +1,15 @@
-$editor-line-width: 20px;
-
+$editor-line-width: 24px;
+$linenum-bar-height: 30px;
 @import url(https://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
 
 @mixin editor {
   margin: 0;
   border: none;
-  font-size: 14px;
+  font-size: 16px;
   font-family: 'Noto Sans JP', sans-serif;
   word-break: break-all;
   word-wrap: break-word;
-  //box-sizing: border-box;
+  box-sizing: content-box;
 }
 @keyframes blink {
   75% {
@@ -19,10 +19,24 @@ $editor-line-width: 20px;
 
 .koji-editor {
   position: absolute;
+  border: 1px solid rgb(180, 180, 180);
+  .koji-editor-linenum-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    min-width: 100%;
+    height: $editor-line-width;
+    background: rgb(235, 235, 235);
+    z-index: -1;
+  }
 }
 
 .koji-editor-textarea {
   @include editor();
+  padding: 0 0 0 $linenum-bar-height;
+  box-shadow: none;
+  outline: none;
   overflow-wrap: break-word;
   transform: rotate(90deg);
   transform-origin: left top;
@@ -38,7 +52,7 @@ $editor-line-width: 20px;
 .koji-editor-display {
   @include editor();
   box-sizing: border-box;
-  border: 1px solid rgb(180, 180, 180);
+  //border: 1px solid rgb(180, 180, 180);
   position: absolute;
   writing-mode: vertical-rl;
   overflow-x: scroll;
@@ -47,12 +61,22 @@ $editor-line-width: 20px;
   .koji-editor-white-space {
     color: #dcdcdc;
   }
-  .koji-editor-lb::after {
-    content: '\21B5';
-    color: #a9d1ff;
-    font-size: 12px;
-    margin-top: 2px;
+  .koji-editor-lb {
+    position: absolute;
+    left: 4px;
+    width: $editor-line-width;
+    &::after {
+      content: '\21B5';
+      color: #a9d1ff;
+      font-size: 12px;
+      height: 0px;
+      margin: 0px;
+      margin: 0;
+      padding: 0;
+      //position: absolute;
+    }
   }
+
   .koji-editor-overlay {
     box-sizing: border-box;
     left: 0.1px;
@@ -85,14 +109,30 @@ $editor-line-width: 20px;
     height: 100%;
     writing-mode: vertical-rl;
     word-break: break-all;
+    counter-reset: number;
     .koji-editor-line {
       min-width: $editor-line-width;
       line-height: $editor-line-width;
-      height: 100%;
+      height: calc(100%-$linenum-bar-height);
       margin: 0;
-      padding: 0;
+      padding: $linenum-bar-height 0 0 0;
       position: relative;
       white-space: normal;
+      &:before {
+        counter-increment: number;
+        content: counter(number);
+        position: absolute;
+        top: 0px;
+        width: 100%;
+        writing-mode: horizontal-tb;
+        color: rgb(142, 142, 142);
+        font-size: 10px;
+        text-align: center;
+      }
+      .char {
+        height: 16px;
+        width: 16px;
+      }
     }
     .FURIGANA_START,
     .FURIGANA,

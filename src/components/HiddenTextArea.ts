@@ -34,6 +34,10 @@ export default class HiddenTextArea extends BaseComponent {
       this.setSize(height, width);
       this.$el.style.left = width + 'px';
     });
+
+    store.$watch('initialized', () => {
+      store.SET_SCROLL_WIDTH(this.$el.scrollHeight);
+    });
   }
 
   observeFocus() {
@@ -52,14 +56,14 @@ export default class HiddenTextArea extends BaseComponent {
         inputEvent: <InputEvent>event,
         selection: {
           start: this.$el.selectionStart,
-          end: this.$el.selectionEnd
-        }
+          end: this.$el.selectionEnd,
+        },
       });
       store.SET_SCROLL_WIDTH(this.$el.scrollHeight);
     });
     store.SET_SELECTION({
       start: this.$el.selectionStart,
-      end: this.$el.selectionEnd
+      end: this.$el.selectionEnd,
     });
   }
 
@@ -77,7 +81,8 @@ export default class HiddenTextArea extends BaseComponent {
       'mousemove',
       'select',
       'selectstart',
-      'click'
+      'click',
+      'mouseup',
     ];
     // update store if selection is changed
     const checkSelection = (e: Event) => {
@@ -89,7 +94,7 @@ export default class HiddenTextArea extends BaseComponent {
       ) {
         store.SET_SELECTION({
           start: this.$el.selectionStart,
-          end: this.$el.selectionEnd
+          end: this.$el.selectionEnd,
         });
       }
     };

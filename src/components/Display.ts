@@ -7,15 +7,15 @@ import { start } from 'repl';
 
 export default class Display extends BaseComponent {
   $el: HTMLElement;
-  srcPanel: HTMLElement;
+  $srcPanel: HTMLElement;
 
   constructor() {
     super();
     this.$el = this.h('div', 'koji-editor-display');
-    this.srcPanel = this.h('div', 'koji-editor-src-panel');
-    this.$el.appendChild(this.srcPanel);
+    this.$srcPanel = this.h('div', 'koji-editor-src-panel');
+    this.$el.appendChild(this.$srcPanel);
     const firstLine = this.h('div', 'koji-editor-line');
-    this.srcPanel.appendChild(firstLine);
+    this.$srcPanel.appendChild(firstLine);
 
     this.add(new Overlay());
 
@@ -25,8 +25,7 @@ export default class Display extends BaseComponent {
       this.updateCaretPos();
     });
     store.$watch('scroll', () => {
-      const offset =
-        this.$el.scrollWidth - this.$el.clientWidth - store.state.scroll;
+      const offset = this.$el.scrollWidth - this.$el.clientWidth - store.state.scroll;
       this.$el.scrollTo(offset, 0);
     });
     // store.$watch('compositionActive', () => {
@@ -63,16 +62,12 @@ export default class Display extends BaseComponent {
     switch (e.key) {
       case 'ArrowUp':
         if (start > 0) {
-          return e.shiftKey
-            ? { start: start - 1, end }
-            : { start: start - 1, end: start - 1 };
+          return e.shiftKey ? { start: start - 1, end } : { start: start - 1, end: start - 1 };
         }
         break;
       case 'ArrowDown':
         if (end < text.length) {
-          return e.shiftKey
-            ? { start, end: end + 1 }
-            : { start: end + 1, end: end + 1 };
+          return e.shiftKey ? { start, end: end + 1 } : { start: end + 1, end: end + 1 };
         }
       case 'ArrowRight':
         const nextPosRight = this.proposeNextCaretPos('right');
@@ -82,9 +77,7 @@ export default class Display extends BaseComponent {
         break;
       case 'ArrowLeft':
         const nextPosLeft = this.proposeNextCaretPos('left');
-        return e.shiftKey
-          ? { start, end: nextPosLeft }
-          : { start: nextPosLeft, end: nextPosLeft };
+        return e.shiftKey ? { start, end: nextPosLeft } : { start: nextPosLeft, end: nextPosLeft };
         break;
       default:
         break;
@@ -128,14 +121,11 @@ export default class Display extends BaseComponent {
   }
 
   private replaceSymbols(text: string): string {
-    return text.replace(
-      /　/g,
-      '<span class="koji-editor-white-space">□</span>'
-    );
+    return text.replace(/　/g, '<span class="koji-editor-white-space">□</span>');
   }
 
   private lineAt(num: number) {
-    return this.srcPanel.childNodes.item(num);
+    return this.$srcPanel.childNodes.item(num);
   }
 
   deleteLines(start: number, end: number) {
@@ -144,42 +134,36 @@ export default class Display extends BaseComponent {
       children.push(this.lineAt(i));
     }
     for (let child of children) {
-      if (child) this.srcPanel.removeChild(child);
+      if (child) this.$srcPanel.removeChild(child);
     }
   }
 
   insertLineAt(srcText: string, targetLineNum: number) {
     const line = this.renderLine(srcText);
-    const lines = this.srcPanel.getElementsByClassName('koji-editor-line');
+    const lines = this.$srcPanel.getElementsByClassName('koji-editor-line');
     let target;
     if (lines.length == 0) {
-      this.srcPanel.appendChild(line);
+      this.$srcPanel.appendChild(line);
     } else {
       if (targetLineNum < lines.length) {
         target = lines[targetLineNum];
       } else {
         target = lines[-1];
       }
-      this.srcPanel.insertBefore(line, target);
+      this.$srcPanel.insertBefore(line, target);
     }
   }
 
   renderAll() {
-    this.srcPanel.innerHTML = '';
+    this.$srcPanel.innerHTML = '';
     store.state.src.text.split('\n').forEach(l => {
       const line = this.renderLine(l);
-      this.srcPanel.appendChild(line);
+      this.$srcPanel.appendChild(line);
     });
   }
 
-  private getCharElemsAt({
-    start,
-    end
-  }: {
-    start: number;
-    end: number;
-  }): Element[] {
-    const chars = this.srcPanel.querySelectorAll('.char');
+  private getCharElemsAt({ start, end }: { start: number; end: number }): Element[] {
+    const chars = this.$srcPanel.querySelectorAll('.char');
     return Array.from(chars).slice(start, end);
   }
 
@@ -194,8 +178,8 @@ export default class Display extends BaseComponent {
     const { start, end } = store.state.selection;
     //const rects: DOMRect[] = [];
     const selected = this.getCharElemsAt({ start, end });
-    const parentRect = this.srcPanel.getBoundingClientRect();
-    const srcPanelWidth = this.srcPanel.clientWidth;
+    const parentRect = this.$srcPanel.getBoundingClientRect();
+    const srcPanelWidth = this.$srcPanel.clientWidth;
     const offset = srcPanelWidth - this.$el.clientWidth;
     const rects = selected.map(c => {
       const rect = c.getBoundingClientRect();
@@ -224,8 +208,8 @@ export default class Display extends BaseComponent {
 
   createRelativeRect(elem: Element): DOMRect {
     const rect = elem.getBoundingClientRect();
-    const parentRect = this.srcPanel.getBoundingClientRect();
-    const srcPanelWidth = this.srcPanel.clientWidth;
+    const parentRect = this.$srcPanel.getBoundingClientRect();
+    const srcPanelWidth = this.$srcPanel.clientWidth;
     const offset = srcPanelWidth - this.$el.clientWidth;
     rect.x = rect.x - parentRect.x - offset;
     rect.y = rect.y - parentRect.y;
@@ -251,17 +235,14 @@ export default class Display extends BaseComponent {
           : selected[selected.length - 1].getBoundingClientRect();
     }
     const currLine =
-      direction == 'right'
-        ? this.lines[sel.start.linenum]
-        : this.lines[sel.end.linenum];
-    const nextLineNum =
-      direction == 'right' ? sel.start.linenum - 1 : sel.end.linenum + 1;
+      direction == 'right' ? this.lines[sel.start.linenum] : this.lines[sel.end.linenum];
+    const nextLineNum = direction == 'right' ? sel.start.linenum - 1 : sel.end.linenum + 1;
     const nextLine = this.lines[nextLineNum];
     // do nothing if prev line does not exist
     if (!nextLine) return store.state.selection.start;
     const currChars = currLine.getElementsByClassName('char');
     const prevChars = nextLine.getElementsByClassName('char');
-    const lineWidth = 22;
+    const lineWidth = 24;
     const candidates: CaretPos[] = [];
     // add chars in current line
     for (let i = 0; i < currChars.length; i++) {
@@ -270,7 +251,7 @@ export default class Display extends BaseComponent {
         lineNum: sel.start.linenum,
         pos: i,
         left: rect.left,
-        top: rect.top
+        top: rect.top,
       });
     }
     // add chars in previous line
@@ -280,17 +261,14 @@ export default class Display extends BaseComponent {
         lineNum: nextLineNum,
         pos: i,
         left: rect.left,
-        top: rect.top
+        top: rect.top,
       });
     }
     // find the closest char in visually next line
     let closestDistY = Infinity;
     let candidate: CaretPos | null = null;
     candidates.forEach(c => {
-      const distX =
-        direction == 'right'
-          ? c.left - originRect.left
-          : originRect.left - c.left;
+      const distX = direction == 'right' ? c.left - originRect.left : originRect.left - c.left;
       const distY = Math.abs(c.top - originRect.top);
       if (distX == lineWidth && distY < closestDistY) {
         candidate = c;
