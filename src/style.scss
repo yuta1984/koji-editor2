@@ -86,6 +86,7 @@ $linenum-bar-height: 30px;
     min-width: 100%;
     writing-mode: vertical-rl;
     position: absolute;
+    z-index: -1;
     .koji-editor-caret {
       position: absolute;
       border-top: 1px solid black;
@@ -96,7 +97,6 @@ $linenum-bar-height: 30px;
     .koji-editor-selection {
       position: absolute;
       background: rgb(186, 214, 255);
-      opacity: 0.5;
       z-index: 100;
     }
     .koji-editor-composition-bar {
