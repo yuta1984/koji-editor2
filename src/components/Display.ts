@@ -3,7 +3,7 @@ import store from '../store';
 import { Token } from '../tokenizers/types';
 import KojiTokenizer from '../tokenizers/KojiTokenizer';
 import Overlay from './Overlay';
-import { start } from 'repl';
+
 
 export default class Display extends BaseComponent {
   $el: HTMLElement;
@@ -24,9 +24,17 @@ export default class Display extends BaseComponent {
       this.updateSelecttionRects();
       this.updateCaretPos();
     });
+    // TODO: fix this
     store.$watch('scroll', () => {
-      const offset = this.$el.scrollWidth - this.$el.clientWidth - store.state.scroll;
-      this.$el.scrollTo(offset, 0);
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      if (userAgent.indexOf('chrome') != -1) {
+        const offset = this.$el.scrollWidth - this.$el.clientWidth - store.state.scroll;
+        this.$el.scrollTo(offset, 0);
+      } else {
+        const offset = - store.state.scroll;
+        this.$el.scrollTo(offset, 0);
+      }
+
     });
     // store.$watch('compositionActive', () => {
     //   if (store.state.compositionActive) {
@@ -270,7 +278,7 @@ export default class Display extends BaseComponent {
     candidates.forEach(c => {
       const distX = direction == 'right' ? c.left - originRect.left : originRect.left - c.left;
       const distY = Math.abs(c.top - originRect.top);
-      if (distX == lineWidth && distY < closestDistY) {
+      if (this.closeEnough(distX, lineWidth, 3) && distY < closestDistY) {
         candidate = c;
         closestDistY = distY;
       }
@@ -280,6 +288,10 @@ export default class Display extends BaseComponent {
     } else {
       return this.inlinePosToAbsolutePos(candidate!.lineNum, candidate!.pos);
     }
+  }
+
+  private closeEnough(a: number, b: number, threshold: number) {
+    return Math.abs(a - b) < threshold;
   }
 
   onSrcChange() {

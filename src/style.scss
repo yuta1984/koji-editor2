@@ -85,6 +85,7 @@ $linenum-bar-height: 30px;
     border: none;
     min-width: 100%;
     writing-mode: vertical-rl;
+    position: absolute;
     .koji-editor-caret {
       position: absolute;
       border-top: 1px solid black;
@@ -138,11 +139,9 @@ $linenum-bar-height: 30px;
     .token {
       &.ID {
         color: blue;
-        font-style: italic;
       }
       &.CLASS {
-        color: orange;
-        font-style: italic;
+        color: goldenrod;
       }
       &.INLINE_START,
       &.INLINE_END,
@@ -150,7 +149,7 @@ $linenum-bar-height: 30px;
       &.INLINE_SEP,
       &.COLON {
         color: rgb(48, 156, 199);
-        font-weight: bold;
+        //font-weight: bold;
       }
       &.BLOCK_MARK,
       &.BLOCK_NAME {
