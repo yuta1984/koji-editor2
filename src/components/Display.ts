@@ -1,6 +1,6 @@
 import BaseComponent from './BaseComponent';
 import store from '../store';
-import { Token } from '../types';
+import { Token } from '../tokenizers/types';
 import KojiTokenizer from '../tokenizers/KojiTokenizer';
 import Overlay from './Overlay';
 import { start } from 'repl';
@@ -55,7 +55,7 @@ export default class Display extends BaseComponent {
     return this.$el.getElementsByClassName('koji-editor-line');
   }
 
-  private proposeSelection(e: KeyboardEvent): { start: number; end: number } {
+  private proposeSelection(e: KeyboardEvent): { start: number; end: number; } {
     const text = store.state.src.text;
     const sel = store.currentSelection;
     const { start, end } = store.state.selection;
@@ -162,7 +162,7 @@ export default class Display extends BaseComponent {
     });
   }
 
-  private getCharElemsAt({ start, end }: { start: number; end: number }): Element[] {
+  private getCharElemsAt({ start, end }: { start: number; end: number; }): Element[] {
     const chars = this.$srcPanel.querySelectorAll('.char');
     return Array.from(chars).slice(start, end);
   }
@@ -190,7 +190,7 @@ export default class Display extends BaseComponent {
     store.SET_SELETECTED_RECTS(rects);
   }
 
-  absolutePosToInlinePos(pos: number): { pos: number; lineNum: number } {
+  absolutePosToInlinePos(pos: number): { pos: number; lineNum: number; } {
     const text = store.state.src.text;
     let lineNum = 0;
     let inlinePos = 0;
@@ -365,14 +365,13 @@ export default class Display extends BaseComponent {
         this.renderAll();
         break;
       case 'deleteContentBackward':
-        if (inputSelection.start.pos == 0) {
+        if (inputSelection.start.pos == 0 && !store.inputHasSelection) {
           this.deleteLines(startLine - 1, endLine);
           this.insertLineAt(store.currentLine, startLine - 1);
         } else {
           this.deleteLines(startLine, endLine);
           this.insertLineAt(store.currentLine, startLine);
         }
-
         break;
       case 'deleteContentForward':
         if (store.nextChar == '\n' && !store.inputHasSelection)

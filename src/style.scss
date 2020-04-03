@@ -27,7 +27,7 @@ $linenum-bar-height: 30px;
     right: 0;
     min-width: 100%;
     height: $editor-line-width;
-    background: rgb(235, 235, 235);
+    background: rgb(240, 240, 240);
     z-index: -1;
   }
 }
@@ -40,13 +40,14 @@ $linenum-bar-height: 30px;
   overflow-wrap: break-word;
   transform: rotate(90deg);
   transform-origin: left top;
-  opacity: 0.2;
+  opacity: 0;
   position: absolute;
   z-index: 999999;
   line-height: $editor-line-width;
   overflow-y: scroll;
   box-sizing: border-box;
   resize: none;
+  cursor: vertical-text;
 }
 
 .koji-editor-display {
@@ -93,7 +94,7 @@ $linenum-bar-height: 30px;
     }
     .koji-editor-selection {
       position: absolute;
-      background: #f00;
+      background: rgb(186, 214, 255);
       opacity: 0.5;
       z-index: 100;
     }
@@ -134,18 +135,54 @@ $linenum-bar-height: 30px;
         width: 16px;
       }
     }
-    .FURIGANA_START,
-    .FURIGANA,
-    .FURIGANA_END {
-      color: blue;
-    }
-    .UNKNOWN {
-      background-color: yellow;
-    }
-    .ANNO_START,
-    .ANNO_END,
-    .ANNOTATION {
-      color: red;
+    .token {
+      &.ID {
+        color: blue;
+        font-style: italic;
+      }
+      &.CLASS {
+        color: orange;
+        font-style: italic;
+      }
+      &.INLINE_START,
+      &.INLINE_END,
+      &.INLINE_NAME,
+      &.INLINE_SEP,
+      &.COLON {
+        color: rgb(48, 156, 199);
+        font-weight: bold;
+      }
+      &.BLOCK_MARK,
+      &.BLOCK_NAME {
+        color: green;
+        font-weight: bold;
+      }
+      &.FURIGANA_START,
+      &.FURIGANA,
+      &.FURIGANA_END {
+        color: blue;
+      }
+      &.KAERITEN {
+        color: goldenrod;
+        font-weight: bold;
+      }
+      &.OKURIGANA {
+        color: gray;
+        font-weight: bold;
+      }
+      &.UNKNOWN {
+        background-color: pink;
+      }
+      &.ANNO_START,
+      &.ANNO_END,
+      &.ANNOTATION {
+        color: red;
+      }
+      &.ILLEGIBLE,
+      &.BUG_HOLE,
+      &.QUESTION {
+        background-color: yellow;
+      }
     }
   }
 }
