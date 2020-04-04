@@ -1,6 +1,6 @@
 import { isArray } from 'util';
 
-type StateName = keyof IState;
+export type StateName = keyof IState;
 function Mutation(state: StateName | StateName[]) {
   return function(target: any, name: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
@@ -12,12 +12,13 @@ function Mutation(state: StateName | StateName[]) {
   };
 }
 
-interface IState {
+export interface IState {
   initialized: boolean;
   src: {
     text: string;
   };
   requestedSrc: string;
+  requestFocus: boolean;
   selection: { start: number; end: number };
   requestedSelection: { start: number; end: number };
 
@@ -43,7 +44,6 @@ interface IState {
   keyboardEvent: KeyboardEvent | null;
   proposedCaretPos: number;
 }
-export type StateKey = keyof IState;
 
 class Store {
   state: IState = {
@@ -52,6 +52,7 @@ class Store {
       text: '',
     },
     requestedSrc: '',
+    requestFocus: false,
     selection: {
       start: 0,
       end: 0,
@@ -87,6 +88,7 @@ class Store {
     initialized: [],
     src: [],
     requestedSrc: [],
+    requestFocus: [],
     selection: [],
     requestedSelection: [],
     selectedRects: [],
@@ -328,6 +330,11 @@ class Store {
   @Mutation('proposedCaretPos')
   SET_PROPOSED_CARET_POS(value: number) {
     this.state.proposedCaretPos = value;
+  }
+
+  @Mutation('requestFocus')
+  SET_REQUEST_FOCUS(value: boolean) {
+    this.state.requestFocus = value;
   }
 
   $trigger(state: StateName | StateName[]) {

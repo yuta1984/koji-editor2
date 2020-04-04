@@ -35,6 +35,10 @@ export default class HiddenTextArea extends BaseComponent {
       this.$el.style.left = width + 'px';
     });
 
+    store.$watch('requestFocus', () => {
+      if (store.state.requestFocus) this.$el.focus();
+    });
+
     store.$watch('initialized', () => {
       store.SET_SCROLL_WIDTH(this.$el.scrollHeight);
     });

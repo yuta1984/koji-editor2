@@ -1,7 +1,7 @@
 import HiddenTextArea from './HiddenTextArea';
 import Display from './Display';
 import BaseComponent from './BaseComponent';
-import store from '../store';
+import store, { StateName } from '../store';
 
 export default class Editor extends BaseComponent {
   $el: HTMLElement;
@@ -29,5 +29,42 @@ export default class Editor extends BaseComponent {
     const height = parent!.clientHeight - this.lineIndicatorHeight || 600;
     this.setSize(width, height);
     store.SET_EDITOR_SIZE(width, height);
+  }
+
+  insertOrReplace(text: string) {
+    const src = store.state.src.text;
+    const { start, end } = store.state.selection;
+    this.focus();
+    if (start !== end) document.execCommand('delete');
+    document.execCommand('insertText', false, text);
+    store.SET_REQUESTED_SELECTION({ start: start, end: start + text.length });
+  }
+
+  focus() {
+    store.SET_REQUEST_FOCUS(true);
+  }
+
+  setSelection(start: number, end: number) {
+    store.SET_REQUESTED_SELECTION({ start, end });
+  }
+
+  watch(state: StateName, handler: () => void) {
+    store.$watch(state, handler);
+  }
+
+  get value(): string {
+    return store.state.src.text;
+  }
+
+  get selectedText(): string {
+    return store.selectedText;
+  }
+
+  get selection() {
+    return store.state.selection;
+  }
+
+  get selectionWithLineNums() {
+    return store.getSelectionWithLineNum;
   }
 }
