@@ -149,12 +149,13 @@ $linenum-bar-height: 30px;
       &.INLINE_SEP,
       &.COLON {
         color: rgb(48, 156, 199);
-        //font-weight: bold;
+        font-weight: bold;
       }
       &.BLOCK_MARK,
       &.BLOCK_NAME {
         color: green;
         font-weight: bold;
+        background-color: rgba(226, 255, 182, 0.5);
       }
       &.FURIGANA_START,
       &.FURIGANA,
