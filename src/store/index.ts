@@ -107,7 +107,7 @@ class Store {
 
   get selectedText() {
     const { start, end } = this.state.selection;
-    return this.state.src.text.slice(start, start + end);
+    return this.state.src.text.slice(start, end);
   }
 
   getSelectionWithLineNum(text: string, sel: { start: number; end: number }) {

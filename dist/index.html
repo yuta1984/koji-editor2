@@ -5,9 +5,11 @@
     <title>Koji Editor</title>
     <script src="koji-editor.js"></script>
     <style>
+      html,
+      body {
+        height: 100%;
+      }
       #editor {
-        position: absolute;
-
         width: 800px;
         height: 80%;
       }
@@ -15,6 +17,10 @@
   </head>
   <body>
     <div id="editor"></div>
+    <div class="buttons">
+      <button id="warigaki">割書</button>
+      <button id="date">日時</button>
+    </div>
     <script>
       const src = `％表紙
 安政二改正
@@ -37,6 +43,14 @@
 《人物：無名氏識》`;
       const parent = document.getElementById('editor');
       const editor = new KojiEditor.Editor(parent, src);
+      const warigaki = document.querySelector('#warigaki');
+      const date = document.querySelector('#date');
+      warigaki.addEventListener('click', () => {
+        editor.insertOrReplace('《割書：一行目｜二行目》');
+      });
+      date.addEventListener('click', () => {
+        editor.markup('《日時：', '》');
+      });
     </script>
   </body>
 </html>

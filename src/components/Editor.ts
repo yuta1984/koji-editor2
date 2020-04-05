@@ -40,6 +40,11 @@ export default class Editor extends BaseComponent {
     store.SET_REQUESTED_SELECTION({ start: start, end: start + text.length });
   }
 
+  markup(pre: string, post: string) {
+    const text = pre + this.selectedText + post;
+    this.insertOrReplace(text);
+  }
+
   focus() {
     store.SET_REQUEST_FOCUS(true);
   }
