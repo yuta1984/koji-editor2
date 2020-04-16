@@ -8,8 +8,8 @@
   },
   "scripts": {
     "start": "webpack-dev-server --port 9000 --inline --progress --profile --colors --watch --content-base dist/ --mode development",
+    "prebuild": "rm -f ./dist/*.js",
     "build": "webpack --config webpack.config.js --mode production",
-    "build.prod": "webpack --config webpack.config.js -p --display-modules",
     "test": "mocha -r ts-node/register test/*.spec.ts"
   },
   "author": "Yuta Hashimoto",
@@ -24,7 +24,7 @@
     "global": "^4.4.0",
     "mocha": "^7.0.0",
     "node-sass": "^4.13.0",
-    "prettier": "^2.0.2",
+    "prettier": "^2.0.4",
     "sass-loader": "^8.0.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.1.2",
@@ -32,7 +32,10 @@
     "typescript": "^3.7.4",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.1"
+    "webpack-dev-server": "^3.10.1",
+    "worker-loader": "^2.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "koji-lang": "^0.2.0"
+  }
 }
