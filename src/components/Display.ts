@@ -1,8 +1,7 @@
 import BaseComponent from './BaseComponent';
 import store from '../store';
-import { Token } from '../tokenizers/types';
 import KojiTokenizer from '../tokenizers/KojiTokenizer';
-import Overlay from './Overlay';
+import SelectionUnderlay from './SelectionUnderlay';
 
 export default class Display extends BaseComponent {
   $el: HTMLElement;
@@ -16,7 +15,7 @@ export default class Display extends BaseComponent {
     const firstLine = this.h('div', 'koji-editor-line');
     this.$srcPanel.appendChild(firstLine);
 
-    this.add(new Overlay());
+    this.add(new SelectionUnderlay());
 
     store.$watch('src', () => this.onSrcChange());
     store.$watch(['selection', 'src', 'focus'], () => {
@@ -27,7 +26,8 @@ export default class Display extends BaseComponent {
     store.$watch('scroll', () => {
       const userAgent = window.navigator.userAgent.toLowerCase();
       if (userAgent.indexOf('chrome') != -1) {
-        const offset = this.$el.scrollWidth - this.$el.clientWidth - store.state.scroll;
+        const offset =
+          this.$el.scrollWidth - this.$el.clientWidth - store.state.scroll;
         this.$el.scrollTo(offset, 0);
       } else {
         const offset = -store.state.scroll;
@@ -68,12 +68,16 @@ export default class Display extends BaseComponent {
     switch (e.key) {
       case 'ArrowUp':
         if (start > 0) {
-          return e.shiftKey ? { start: start - 1, end } : { start: start - 1, end: start - 1 };
+          return e.shiftKey
+            ? { start: start - 1, end }
+            : { start: start - 1, end: start - 1 };
         }
         break;
       case 'ArrowDown':
         if (end < text.length) {
-          return e.shiftKey ? { start, end: end + 1 } : { start: end + 1, end: end + 1 };
+          return e.shiftKey
+            ? { start, end: end + 1 }
+            : { start: end + 1, end: end + 1 };
         }
       case 'ArrowRight':
         const nextPosRight = this.proposeNextCaretPos('right');
@@ -83,7 +87,9 @@ export default class Display extends BaseComponent {
         break;
       case 'ArrowLeft':
         const nextPosLeft = this.proposeNextCaretPos('left');
-        return e.shiftKey ? { start, end: nextPosLeft } : { start: nextPosLeft, end: nextPosLeft };
+        return e.shiftKey
+          ? { start, end: nextPosLeft }
+          : { start: nextPosLeft, end: nextPosLeft };
         break;
       default:
         break;
@@ -127,7 +133,10 @@ export default class Display extends BaseComponent {
   }
 
   private replaceSymbols(text: string): string {
-    return text.replace(/　/g, '<span class="koji-editor-white-space">□</span>');
+    return text.replace(
+      /　/g,
+      '<span class="koji-editor-white-space">□</span>'
+    );
   }
 
   private lineAt(num: number) {
@@ -168,7 +177,13 @@ export default class Display extends BaseComponent {
     });
   }
 
-  private getCharElemsAt({ start, end }: { start: number; end: number }): Element[] {
+  private getCharElemsAt({
+    start,
+    end
+  }: {
+    start: number;
+    end: number;
+  }): Element[] {
     const chars = this.$srcPanel.querySelectorAll('.char');
     return Array.from(chars).slice(start, end);
   }
@@ -241,8 +256,11 @@ export default class Display extends BaseComponent {
           : selected[selected.length - 1].getBoundingClientRect();
     }
     const currLine =
-      direction == 'right' ? this.lines[sel.start.linenum] : this.lines[sel.end.linenum];
-    const nextLineNum = direction == 'right' ? sel.start.linenum - 1 : sel.end.linenum + 1;
+      direction == 'right'
+        ? this.lines[sel.start.linenum]
+        : this.lines[sel.end.linenum];
+    const nextLineNum =
+      direction == 'right' ? sel.start.linenum - 1 : sel.end.linenum + 1;
     const nextLine = this.lines[nextLineNum];
     // do nothing if prev line does not exist
     if (!nextLine) return store.state.selection.start;
@@ -257,7 +275,7 @@ export default class Display extends BaseComponent {
         lineNum: sel.start.linenum,
         pos: i,
         left: rect.left,
-        top: rect.top,
+        top: rect.top
       });
     }
     // add chars in previous line
@@ -267,14 +285,17 @@ export default class Display extends BaseComponent {
         lineNum: nextLineNum,
         pos: i,
         left: rect.left,
-        top: rect.top,
+        top: rect.top
       });
     }
     // find the closest char in visually next line
     let closestDistY = Infinity;
     let candidate: CaretPos | null = null;
     candidates.forEach(c => {
-      const distX = direction == 'right' ? c.left - originRect.left : originRect.left - c.left;
+      const distX =
+        direction == 'right'
+          ? c.left - originRect.left
+          : originRect.left - c.left;
       const distY = Math.abs(c.top - originRect.top);
       if (this.closeEnough(distX, lineWidth, 3) && distY < closestDistY) {
         candidate = c;

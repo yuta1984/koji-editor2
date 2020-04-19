@@ -2,9 +2,9 @@ import { isArray } from 'util';
 
 export type StateName = keyof IState;
 function Mutation(state: StateName | StateName[]) {
-  return function(target: any, name: string, descriptor: PropertyDescriptor) {
+  return function (target: any, name: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
-    descriptor.value = function(this: any) {
+    descriptor.value = function (this: any) {
       this.prevState = this.state;
       method.apply(this, arguments);
       this.$trigger(state);
@@ -19,15 +19,15 @@ export interface IState {
   };
   requestedSrc: string;
   requestFocus: boolean;
-  selection: { start: number; end: number };
-  requestedSelection: { start: number; end: number };
+  selection: { start: number; end: number; };
+  requestedSelection: { start: number; end: number; };
 
   selectedRects: DOMRect[];
-  caretPos: { x: number; y: number };
+  caretPos: { x: number; y: number; };
   input: {
     inputEvent?: InputEvent;
     text: string;
-    selection: { start: number; end: number };
+    selection: { start: number; end: number; };
   };
   focus: boolean;
   editorSize: {
@@ -110,7 +110,7 @@ class Store {
     return this.state.src.text.slice(start, end);
   }
 
-  getSelectionWithLineNum(text: string, sel: { start: number; end: number }) {
+  getSelectionWithLineNum(text: string, sel: { start: number; end: number; }) {
     let sline = 0,
       spos = 0,
       eline = 0,
@@ -258,7 +258,7 @@ class Store {
   SET_INPUT(payload: {
     srcText: string;
     inputEvent?: InputEvent;
-    selection: { start: number; end: number };
+    selection: { start: number; end: number; };
   }) {
     this.state.input.inputEvent = payload.inputEvent;
     this.state.input.selection = this.state.selection;
@@ -273,12 +273,12 @@ class Store {
   }
 
   @Mutation('selection')
-  SET_SELECTION(sel: { start: number; end: number }) {
+  SET_SELECTION(sel: { start: number; end: number; }) {
     this.state.selection = sel;
   }
 
   @Mutation('requestedSelection')
-  SET_REQUESTED_SELECTION(sel: { start: number; end: number }) {
+  SET_REQUESTED_SELECTION(sel: { start: number; end: number; }) {
     this.state.requestedSelection = sel;
   }
 
@@ -340,12 +340,12 @@ class Store {
   $trigger(state: StateName | StateName[]) {
     if (isArray(state)) {
       state.forEach(s => {
-        this.handlers[s].forEach(function(this: any, h) {
+        this.handlers[s].forEach(function (this: any, h) {
           h.apply(this);
         });
       });
     } else {
-      this.handlers[state].forEach(function(this: any, h) {
+      this.handlers[state].forEach(function (this: any, h) {
         h.apply(this);
       });
     }

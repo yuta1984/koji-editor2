@@ -1,8 +1,7 @@
 import BaseComponent from './BaseComponent';
 import store from '../store';
-import { writeHeapSnapshot } from 'v8';
 
-export default class SourceSelector extends BaseComponent {
+export default class SrcSelectionUnderlay extends BaseComponent {
   $el: HTMLElement;
   selDivs: HTMLDivElement[] = [];
   compositionDivs: HTMLElement[] = [];
