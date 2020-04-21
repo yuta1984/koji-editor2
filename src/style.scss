@@ -78,7 +78,7 @@ $linenum-bar-height: 30px;
     }
   }
 
-  .koji-editor-overlay {
+  .koji-editor-layer {
     box-sizing: border-box;
     left: 0.1px;
     height: 100%;
@@ -87,23 +87,28 @@ $linenum-bar-height: 30px;
     writing-mode: vertical-rl;
     position: absolute;
     z-index: -1;
-    .koji-editor-caret {
-      position: absolute;
-      border-top: 1px solid black;
-      width: 16px;
-      height: 1px;
-      animation: blink 1s step-end infinite;
+    &.koji-editor-caret-layer{
+      z-index: 1;
+      .koji-editor-caret {
+        position: absolute;
+        border-top: 1px solid black;
+        width: 16px;
+        height: 1px;
+        animation: blink 1s step-end infinite;
+      }
     }
-    .koji-editor-selection {
-      position: absolute;
-      background: rgb(186, 214, 255);
-      z-index: 100;
+    &.koji-editor-selection-layer {
+      .koji-editor-selection {
+        position: absolute;
+        background: rgb(186, 214, 255);
+        
+      }
     }
-    .koji-editor-composition-bar {
-      position: absolute;
-      border-left: 1px solid black;
-      z-index: 101;
-    }
+    &.koji-editor-highlight-layer {
+      .koji-editor-error{
+        background: rgb(186, 214, 255);
+      }
+    }   
   }
   .koji-editor-src-panel {
     min-width: 100%;

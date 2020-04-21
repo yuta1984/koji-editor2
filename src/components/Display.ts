@@ -1,7 +1,9 @@
 import BaseComponent from './BaseComponent';
 import store from '../store';
 import KojiTokenizer from '../tokenizers/KojiTokenizer';
-import SelectionUnderlay from './SelectionUnderlay';
+import SelectionLayer from './layers/SelectionLayer';
+import HilighterLayer from './layers/HilightLayer';
+import CaretLayer from './layers/CaretLayer';
 
 export default class Display extends BaseComponent {
   $el: HTMLElement;
@@ -15,7 +17,10 @@ export default class Display extends BaseComponent {
     const firstLine = this.h('div', 'koji-editor-line');
     this.$srcPanel.appendChild(firstLine);
 
-    this.add(new SelectionUnderlay());
+    this.add(new HilighterLayer());
+    this.add(new SelectionLayer());
+    this.add(new CaretLayer());
+
 
     store.$watch('src', () => this.onSrcChange());
     store.$watch(['selection', 'src', 'focus'], () => {

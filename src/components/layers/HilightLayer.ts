@@ -1,11 +1,8 @@
-import BaseComponent from './BaseComponent';
-import store from '../store';
-const KojiWorker = require('worker-loader?inline!./koji-lang.worker');
+import store from '../../store';
+import Layer from './AbstractLayer';
+const KojiWorker = require('worker-loader?inline!../../koji-lang.worker');
 
-
-
-export default class HilighterUnderlay extends BaseComponent {
-    $el: HTMLElement;
+export default class HilightLayer extends Layer {
     errorHighlights: HTMLElement[] = [];
     timerId = 0;
     worker: Worker;
@@ -14,13 +11,12 @@ export default class HilighterUnderlay extends BaseComponent {
 
     constructor() {
         super();
-        this.$el = this.h('div', 'src-highlight-overlay');
+        this.$el.classList.add('koji-editor-highlight-layer')
         this.worker = new KojiWorker();
         this.worker.onmessage = (ev) => {
             if (ev.data.type === 'parse')
                 this.parseResult = ev.data.result;
         };
-
     }
 
     private prepareParsing() {
@@ -37,7 +33,4 @@ export default class HilighterUnderlay extends BaseComponent {
         this.errorHighlights.forEach(e => e.remove());
         this.errorHighlights = [];
     }
-
-
-
 }
