@@ -1,13 +1,14 @@
 import store from '../../store';
 import Layer from './AbstractLayer';
+import { cssClasses } from '../../constants';
 
 export default class CaretLayer extends Layer {
 
-    $caret = this.h('span', 'koji-editor-caret');
+    $caret = this.h('span', cssClasses.CARET);
 
     constructor() {
         super();
-        this.$el.classList.add('koji-editor-caret-layer')
+        this.$el.classList.add(cssClasses.CARET_LAYER)
         this.$el.appendChild(this.$caret)
 
         store.$watch(['caretPos', 'input'], () => {

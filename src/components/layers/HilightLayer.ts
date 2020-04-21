@@ -1,5 +1,6 @@
 import store from '../../store';
 import Layer from './AbstractLayer';
+import { cssClasses } from '../../constants';
 const KojiWorker = require('worker-loader?inline!../../koji-lang.worker');
 
 export default class HilightLayer extends Layer {
@@ -11,7 +12,7 @@ export default class HilightLayer extends Layer {
 
     constructor() {
         super();
-        this.$el.classList.add('koji-editor-highlight-layer')
+        this.$el.classList.add(cssClasses.HIGHLIGHT_LAYER)
         this.worker = new KojiWorker();
         this.worker.onmessage = (ev) => {
             if (ev.data.type === 'parse')

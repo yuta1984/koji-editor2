@@ -4,6 +4,7 @@ import KojiTokenizer from '../tokenizers/KojiTokenizer';
 import SelectionLayer from './layers/SelectionLayer';
 import HilighterLayer from './layers/HilightLayer';
 import CaretLayer from './layers/CaretLayer';
+import { cssClasses } from '../constants';
 
 export default class Display extends BaseComponent {
   $el: HTMLElement;
@@ -11,10 +12,10 @@ export default class Display extends BaseComponent {
 
   constructor() {
     super();
-    this.$el = this.h('div', 'koji-editor-display');
-    this.$srcPanel = this.h('div', 'koji-editor-src-panel');
+    this.$el = this.h('div', cssClasses.DISPLAY);
+    this.$srcPanel = this.h('div', cssClasses.SRC_PANEL);
     this.$el.appendChild(this.$srcPanel);
-    const firstLine = this.h('div', 'koji-editor-line');
+    const firstLine = this.h('div', cssClasses.LINE);
     this.$srcPanel.appendChild(firstLine);
 
     this.add(new HilighterLayer());
@@ -63,7 +64,7 @@ export default class Display extends BaseComponent {
   }
 
   get lines() {
-    return this.$el.getElementsByClassName('koji-editor-line');
+    return this.$el.getElementsByClassName(cssClasses.LINE);
   }
 
   private proposeSelection(e: KeyboardEvent): { start: number; end: number } {
@@ -125,7 +126,7 @@ export default class Display extends BaseComponent {
       .join('');
     html = this.replaceSymbols(html);
     html += '<span class="koji-editor-lb char"></span>';
-    const lineElem = this.h('div', 'koji-editor-line');
+    const lineElem = this.h('div', cssClasses.LINE);
     lineElem.innerHTML = html;
     return lineElem;
   }
@@ -160,7 +161,7 @@ export default class Display extends BaseComponent {
 
   insertLineAt(srcText: string, targetLineNum: number) {
     const line = this.renderLine(srcText);
-    const lines = this.$srcPanel.getElementsByClassName('koji-editor-line');
+    const lines = this.$srcPanel.getElementsByClassName(cssClasses.LINE);
     let target;
     if (lines.length == 0) {
       this.$srcPanel.appendChild(line);
@@ -250,7 +251,7 @@ export default class Display extends BaseComponent {
       top: number;
     };
     const sel = store.currentSelection;
-    const caret = document.getElementsByClassName('koji-editor-caret')[0];
+    const caret = document.getElementsByClassName(cssClasses.CARET)[0];
     let originRect = caret.getBoundingClientRect();
     // if caret is not shown
     if (store.isRegionSelected) {

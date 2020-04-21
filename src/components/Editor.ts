@@ -2,6 +2,7 @@ import HiddenTextArea from './HiddenTextArea';
 import Display from './Display';
 import BaseComponent from './BaseComponent';
 import store, { StateName } from '../store';
+import { cssClasses } from '../constants';
 
 export default class Editor extends BaseComponent {
   $el: HTMLElement;
@@ -11,8 +12,8 @@ export default class Editor extends BaseComponent {
   constructor(parentEl: HTMLElement, src = '') {
     super();
     this.$el = document.createElement('div');
-    this.$el.classList.add('koji-editor');
-    this.$linenumBg = this.h('div', 'koji-editor-linenum-bg');
+    this.$el.classList.add(cssClasses.EDITOR);
+    this.$linenumBg = this.h('div', cssClasses.LINENUM_BG);
     this.$el.appendChild(this.$linenumBg);
     this.add(new HiddenTextArea());
     this.add(new Display());

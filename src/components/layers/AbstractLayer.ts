@@ -1,5 +1,6 @@
 import BaseComponent from '../BaseComponent';
 import store from '../../store';
+import { cssClasses } from '../../constants';
 
 export default abstract class Layer extends BaseComponent {
     $el: HTMLElement;
@@ -7,8 +8,8 @@ export default abstract class Layer extends BaseComponent {
 
     constructor() {
         super();
-        this.$el = this.h('div', 'koji-editor-layer');
-        this.$srcPanel = document.querySelector('.koji-editor-src-panel')!
+        this.$el = this.h('div', cssClasses.LAYER);
+        this.$srcPanel = document.querySelector('.' + cssClasses.SRC_PANEL)!
 
         store.$watch('editorSize', () => {
             this.resize(store.state.editorSize.width, store.state.editorSize.height);
