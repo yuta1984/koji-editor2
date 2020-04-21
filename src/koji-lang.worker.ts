@@ -1,6 +1,6 @@
 import * as Koji from 'koji-lang';
 
-const ctx: Worker = self as any
+const ctx: Worker = self as any;
 
 // Post data to parent thread
 //ctx.postMessage({ type: 'initialized' }, "*");
@@ -18,4 +18,4 @@ ctx.addEventListener('message', (event) => {
   }
 });
 
-export default ctx
+export default ctx;
