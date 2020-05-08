@@ -2745,10 +2745,10 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-koji-lang@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/koji-lang/-/koji-lang-0.2.0.tgz#5a9c80375d87e6e4e267589b8da7c97bf979fbb5"
-  integrity sha512-7eBfsVUgJW4kPTrfWADEa7SxQRimagZ9dcJXwyqZWA1UVfoaBagzc+Jk2LLZdIH0MPNOHMNb/OfLAWw/YI9HAg==
+koji-lang@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/koji-lang/-/koji-lang-0.3.3.tgz#f9ebe42cad3fe916fa2a2c8714194e2c9746ab05"
+  integrity sha512-7HuCiL1uax9AMJC1isxTAgQHLQZjft44lLiT/mFiRgQny6n1O7UH1Nq997e5dw4nDM0Mo+BHuojnFEsHGsV64g==
   dependencies:
     "@types/node" "^12.0.10"
     antlr4ts "^0.5.0-alpha.3"

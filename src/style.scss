@@ -3,191 +3,214 @@ $linenum-bar-height: 30px;
 @import url(https://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
 
 @mixin editor {
-  margin: 0;
-  border: none;
-  font-size: 16px;
-  font-family: 'Noto Sans JP', sans-serif;
-  word-break: break-all;
-  word-wrap: break-word;
-  box-sizing: content-box;
+	margin: 0;
+	border: none;
+	font-size: 16px;
+	font-family: 'Noto Sans JP', sans-serif;
+	word-break: break-all;
+	word-wrap: break-word;
+	box-sizing: content-box;
 }
 @keyframes blink {
-  75% {
-    opacity: 0;
-  }
+	75% {
+		opacity: 0;
+	}
 }
 
 .koji-editor {
-  position: absolute;
-  border: 1px solid rgb(180, 180, 180);
-  .koji-editor-linenum-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    min-width: 100%;
-    height: $editor-line-width;
-    background: rgb(240, 240, 240);
-    z-index: -1;
-  }
+	position: absolute;
+	border: 1px solid rgb(180, 180, 180);
+	.koji-editor-linenum-bg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		min-width: 100%;
+		height: $editor-line-width;
+		background: rgb(240, 240, 240);
+		z-index: -1;
+	}
 }
 
 .koji-editor-textarea {
-  @include editor();
-  padding: 0 0 0 $linenum-bar-height;
-  box-shadow: none;
-  outline: none;
-  overflow-wrap: break-word;
-  transform: rotate(90deg);
-  transform-origin: left top;
-  opacity: 0;
-  position: absolute;
-  z-index: 999999;
-  line-height: $editor-line-width;
-  overflow-y: scroll;
-  box-sizing: border-box;
-  resize: none;
-  cursor: vertical-text;
+	@include editor();
+	padding: 0 0 0 $linenum-bar-height;
+	box-shadow: none;
+	outline: none;
+	overflow-wrap: break-word;
+	transform: rotate(90deg);
+	transform-origin: left top;
+	opacity: 0;
+	position: absolute;
+	z-index: 999999;
+	line-height: $editor-line-width;
+	overflow-y: scroll;
+	box-sizing: border-box;
+	resize: none;
+	cursor: vertical-text;
 }
 
 .koji-editor-display {
-  @include editor();
-  box-sizing: border-box;
-  //border: 1px solid rgb(180, 180, 180);
-  position: absolute;
-  writing-mode: vertical-rl;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: pre;
-  .koji-editor-white-space {
-    color: #dcdcdc;
-  }
-  .koji-editor-lb {
-    position: absolute;
-    left: 4px;
-    width: $editor-line-width;
-    &::after {
-      content: '\21B5';
-      color: #a9d1ff;
-      font-size: 12px;
-      height: 0px;
-      margin: 0px;
-      margin: 0;
-      padding: 0;
-      //position: absolute;
-    }
-  }
+	@include editor();
+	box-sizing: border-box;
+	//border: 1px solid rgb(180, 180, 180);
+	position: absolute;
+	writing-mode: vertical-rl;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	white-space: pre;
+	.koji-editor-white-space {
+		color: #dcdcdc;
+	}
+	.koji-editor-lb {
+		position: absolute;
+		left: 4px;
+		width: $editor-line-width;
+		&::after {
+			content: '\21B5';
+			color: #a9d1ff;
+			font-size: 12px;
+			height: 0px;
+			margin: 0px;
+			margin: 0;
+			padding: 0;
+			//position: absolute;
+		}
+	}
 
-  .koji-editor-layer {
-    box-sizing: border-box;
-    left: 0.1px;
-    height: 100%;
-    border: none;
-    min-width: 100%;
-    writing-mode: vertical-rl;
-    position: absolute;
-    z-index: -1;
-    &.koji-editor-caret-layer{
-      z-index: 1;
-      .koji-editor-caret {
-        position: absolute;
-        border-top: 1px solid black;
-        width: 16px;
-        height: 1px;
-        animation: blink 1s step-end infinite;
-      }
-    }
-    &.koji-editor-selection-layer {
-      .koji-editor-selection {
-        position: absolute;
-        background: rgb(186, 214, 255);
-        
-      }
-    }
-    &.koji-editor-highlight-layer {
-      .koji-editor-error{
-        background: rgb(186, 214, 255);
-      }
-    }   
-  }
-  .koji-editor-src-panel {
-    min-width: 100%;
-    position: absolute;
-    height: 100%;
-    writing-mode: vertical-rl;
-    word-break: break-all;
-    counter-reset: number;
-    .koji-editor-line {
-      min-width: $editor-line-width;
-      line-height: $editor-line-width;
-      height: calc(100%-$linenum-bar-height);
-      margin: 0;
-      padding: $linenum-bar-height 0 0 0;
-      position: relative;
-      white-space: normal;
-      &:before {
-        counter-increment: number;
-        content: counter(number);
-        position: absolute;
-        top: 0px;
-        width: 100%;
-        writing-mode: horizontal-tb;
-        color: rgb(142, 142, 142);
-        font-size: 10px;
-        text-align: center;
-      }
-      .char {
-        height: 16px;
-        width: 16px;
-      }
-    }
-    .token {
-      &.ID {
-        color: blue;
-      }
-      &.CLASS {
-        color: goldenrod;
-      }
-      &.INLINE_START,
-      &.INLINE_END,
-      &.INLINE_NAME,
-      &.INLINE_SEP,
-      &.COLON {
-        color: rgb(48, 156, 199);
-        font-weight: bold;
-      }
-      &.BLOCK_MARK,
-      &.BLOCK_NAME {
-        color: green;
-        font-weight: bold;
-        background-color: rgba(226, 255, 182, 0.5);
-      }
-      &.FURIGANA_START,
-      &.FURIGANA,
-      &.FURIGANA_END {
-        color: blue;
-      }
-      &.KAERITEN {
-        color: goldenrod;
-        font-weight: bold;
-      }
-      &.OKURIGANA {
-        color: gray;
-        font-weight: bold;
-      }
-      &.UNKNOWN {
-        background-color: pink;
-      }
-      &.ANNO_START,
-      &.ANNO_END,
-      &.ANNOTATION {
-        color: red;
-      }
-      &.ILLEGIBLE,
-      &.BUG_HOLE,
-      &.QUESTION {
-        background-color: yellow;
-      }
-    }
-  }
+	.koji-editor-layer {
+		box-sizing: border-box;
+		left: 0.1px;
+		height: 100%;
+		border: none;
+		min-width: 100%;
+		writing-mode: vertical-rl;
+		position: absolute;
+		z-index: -1;
+		&.koji-editor-caret-layer {
+			z-index: 1;
+			.koji-editor-caret {
+				position: absolute;
+				border-top: 1px solid black;
+				width: 16px;
+				height: 1px;
+				animation: blink 1s step-end infinite;
+			}
+		}
+		&.koji-editor-selection-layer {
+			.koji-editor-selection {
+				position: absolute;
+				background: rgba(186, 214, 255, 0.8);
+			}
+		}
+		&.koji-editor-highlight-layer {
+			.koji-editor-error {
+				background: pink;
+				position: absolute;
+			}
+			.koji-editor-paren {
+				background: rgba(186, 214, 255, 0.8);
+				position: absolute;
+				z-index: 9999;
+			}
+			.koji-editor-inline-highlight,
+			.koji-editor-block-highlight {
+				background: rgba(237, 237, 237, 0.8);
+				position: absolute;
+			}
+		}
+	}
+	.koji-editor-src-panel {
+		min-width: 100%;
+		position: absolute;
+		height: 100%;
+		writing-mode: vertical-rl;
+		word-break: break-all;
+		counter-reset: number;
+		.koji-editor-line {
+			min-width: $editor-line-width;
+			line-height: $editor-line-width;
+			height: calc(100%-$linenum-bar-height);
+			margin: 0;
+			padding: $linenum-bar-height 0 0 0;
+			position: relative;
+			white-space: normal;
+			&:before {
+				counter-increment: number;
+				content: counter(number);
+				position: absolute;
+				top: 0px;
+				width: 100%;
+				writing-mode: horizontal-tb;
+				color: rgb(142, 142, 142);
+				font-size: 10px;
+				text-align: center;
+			}
+			.char {
+				height: 16px;
+				width: 16px;
+			}
+		}
+		.token {
+			&.ID {
+				color: blue;
+			}
+			&.CLASS {
+				color: goldenrod;
+			}
+			&.INLINE_START,
+			&.INLINE_END,
+			&.INLINE_NAME,
+			&.INLINE_SEP,
+			&.COLON {
+				color: rgb(48, 156, 199);
+				font-weight: bold;
+			}
+			&.BLOCK_MARK,
+			&.BLOCK_NAME {
+				color: green;
+				font-weight: bold;
+				background-color: rgba(226, 255, 182, 0.5);
+			}
+			&.FURIGANA_START,
+			&.FURIGANA,
+			&.FURIGANA_END {
+				color: blue;
+			}
+			&.PERSON_START,
+			&.PERSON_END,
+			&.PLACE_START,
+			&.PLACe_END,
+			&.DATE_START,
+			&.DATE_END {
+				font-weight: bold;
+			}
+			&.PERSON,
+			&.PLACE,
+			&.DATE {
+				font-weight: bold;
+			}
+			&.KAERITEN {
+				color: goldenrod;
+				font-weight: bold;
+			}
+			&.OKURIGANA {
+				color: gray;
+				font-weight: bold;
+			}
+			&.UNKNOWN {
+				background-color: pink;
+			}
+			&.ANNO_START,
+			&.ANNO_END,
+			&.ANNOTATION {
+				color: red;
+			}
+			&.ILLEGIBLE,
+			&.BUG_HOLE,
+			&.QUESTION {
+				background-color: yellow;
+			}
+		}
+	}
 }

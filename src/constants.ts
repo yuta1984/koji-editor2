@@ -7,6 +7,10 @@ export const cssClasses = {
     CARET: 'koji-editor-caret',
     LAYER: 'koji-editor-layer',
     CARET_LAYER: 'koji-editor-caret-layer',
-    HIGHLIGHT_LAYER: 'koji-editor-highlight-layer'
+    HIGHLIGHT_LAYER: 'koji-editor-highlight-layer',
+    ERROR: 'koji-editor-error',
+    PAREN: 'koji-editor-paren',
+    INLINE_HIGHLIGHT: 'koji-editor-inline-highlight',
+    BLOCK_HIGHLIGHT: 'koji-editor-block-highlight'
 } as const
 

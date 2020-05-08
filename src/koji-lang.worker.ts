@@ -7,15 +7,16 @@ const ctx: Worker = self as any;
 
 // Respond to message from parent thread
 ctx.addEventListener('message', (event) => {
-  if (event.data.type === 'parse') {
-    const src = event.data.src;
-    const result = Koji.parse(src);
-    ctx.postMessage({ type: 'parse', result: result });
-  } else if (event.data.type === 'convertToHtml') {
-    const src = event.data.src;
-    const html = Koji.convertToHTML(src);
-    ctx.postMessage({ type: 'convertToHtml', html: html });
-  }
+	if (event.data.type === 'parse') {
+		const src = event.data.src;
+		const result = Koji.parse(src);
+		console.log(result);
+		ctx.postMessage({ type: 'parse', result: result });
+	} else if (event.data.type === 'convertToHtml') {
+		const src = event.data.src;
+		const html = Koji.convertToHTML(src);
+		ctx.postMessage({ type: 'convertToHtml', html: html });
+	}
 });
 
 export default ctx;
