@@ -38,6 +38,7 @@ export default class Editor extends BaseComponent {
 		this.focus();
 		if (start !== end) document.execCommand('delete');
 		document.execCommand('insertText', false, text);
+		store.SET_REQUESTED_SRC(store.state.src.text); // to trigger renderAll()
 		store.SET_REQUESTED_SELECTION({ start: start, end: start + text.length });
 	}
 
