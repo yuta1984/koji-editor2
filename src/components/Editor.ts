@@ -74,4 +74,12 @@ export default class Editor extends BaseComponent {
 	get selectionWithLineNums() {
 		return store.getSelectionWithLineNum;
 	}
+
+	get parseResult() {
+		return store.state.parseResult;
+	}
+
+	get htmlString() {
+		return store.state.htmlString;
+	}
 }

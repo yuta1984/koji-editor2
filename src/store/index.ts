@@ -1,4 +1,5 @@
 import { isArray } from 'util';
+import { KojiBlockNode, KojiInlineNode, KojiASTNode } from 'koji-lang/lib/KojiAstBuilder';
 
 export type StateName = keyof IState;
 function Mutation(state: StateName | StateName[]) {
@@ -15,10 +16,10 @@ function Mutation(state: StateName | StateName[]) {
 interface ParseResult {
 	errors: [];
 	ast: {
-		inlines: { location: { start: number; stop: number } }[];
-		blocks: any[];
+		inlines: KojiInlineNode[];
+		blocks: KojiBlockNode[];
 		parens: { start: number; stop: number }[];
-		children: [];
+		children: KojiASTNode[];
 	};
 }
 
@@ -55,6 +56,7 @@ export interface IState {
 	proposedCaretPos: number;
 
 	parseResult: ParseResult | null;
+	currentNode: KojiBlockNode | KojiInlineNode | null;
 	htmlString: string;
 }
 
@@ -98,6 +100,7 @@ class Store {
 		proposedCaretPos: 0,
 
 		parseResult: null,
+		currentNode: null,
 		htmlString: ''
 	};
 	handlers: { [P in StateName]: Function[] } = {
@@ -120,6 +123,7 @@ class Store {
 		keyboardEvent: [],
 		proposedCaretPos: [],
 		parseResult: [],
+		currentNode: [],
 		htmlString: []
 	};
 
@@ -359,6 +363,11 @@ class Store {
 	@Mutation('htmlString')
 	SET_HTML_STRING(value: string) {
 		this.state.htmlString = value;
+	}
+
+	@Mutation('currentNode')
+	SET_CURRENT_NODE(value: KojiBlockNode | KojiInlineNode | null) {
+		this.state.currentNode = value;
 	}
 
 	$trigger(state: StateName | StateName[]) {

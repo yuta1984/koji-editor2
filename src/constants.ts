@@ -5,6 +5,7 @@ export const cssClasses = {
     LINE: 'koji-editor-line',
     LINENUM_BG: 'koji-editor-linenum-bg',
     CARET: 'koji-editor-caret',
+    TAG_INFO: 'koji-editor-tag-info',
     LAYER: 'koji-editor-layer',
     CARET_LAYER: 'koji-editor-caret-layer',
     HIGHLIGHT_LAYER: 'koji-editor-highlight-layer',

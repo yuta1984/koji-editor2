@@ -96,6 +96,18 @@ $linenum-bar-height: 30px;
 				height: 1px;
 				animation: blink 1s step-end infinite;
 			}
+			.koji-editor-tag-info {
+				position: absolute;
+				padding: 3px 5px;
+				margin-left: 16px;
+				background: black;
+				opacity: 0.8;
+				color: white;
+				z-index: 999999;
+				font-size: 11px;
+				writing-mode: horizontal-tb;
+				border-radius: 5px;
+			}
 		}
 		&.koji-editor-selection-layer {
 			.koji-editor-selection {
@@ -180,7 +192,7 @@ $linenum-bar-height: 30px;
 			&.PERSON_START,
 			&.PERSON_END,
 			&.PLACE_START,
-			&.PLACe_END,
+			&.PLACE_END,
 			&.DATE_START,
 			&.DATE_END {
 				font-weight: bold;

@@ -10,11 +10,11 @@ ctx.addEventListener('message', (event) => {
 	if (event.data.type === 'parse') {
 		const src = event.data.src;
 		const result = Koji.parse(src);
-		console.log(result);
 		ctx.postMessage({ type: 'parse', result: result });
 	} else if (event.data.type === 'convertToHtml') {
 		const src = event.data.src;
-		const html = Koji.convertToHTML(src);
+		const result = Koji.parse(src);
+		const html = Koji.convertToHTML(result.ast);
 		ctx.postMessage({ type: 'convertToHtml', html: html });
 	}
 });

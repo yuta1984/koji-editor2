@@ -36,11 +36,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.3.tgz#6356df2647de9eac569f9a52eda3480fa9e70b4d"
   integrity sha512-01s+ac4qerwd6RHD+mVbOEsraDHSgUaefQlEdBbUolnQFjKwCr7luvAlEwW1RFojh67u0z4OUTjPn9LEl4zIkA==
 
-"@types/node@^12.0.10":
-  version "12.12.35"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.35.tgz#1e61b226c14380f4384f70cfe49a65c2c553ad2b"
-  integrity sha512-ASYsaKecA7TUsDrqIGPNk3JeEox0z/0XR/WsJJ8BIX/9+SkMSImQXKWfU/yBrSyc7ZSE/NPqLu36Nur0miCFfQ==
-
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.8.5.tgz#51b1c5fe6576a34953bf4b253df9f0d490d9e359"
@@ -2745,12 +2740,11 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-koji-lang@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/koji-lang/-/koji-lang-0.3.3.tgz#f9ebe42cad3fe916fa2a2c8714194e2c9746ab05"
-  integrity sha512-7HuCiL1uax9AMJC1isxTAgQHLQZjft44lLiT/mFiRgQny6n1O7UH1Nq997e5dw4nDM0Mo+BHuojnFEsHGsV64g==
+koji-lang@^0.3.5:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/koji-lang/-/koji-lang-0.3.5.tgz#ba92679f26ec59fee0d530a9051f553cd8479e83"
+  integrity sha512-MSpmmBt/08HU74tI2SvZ86aeLYMJ6AJIabJdy1K2wr4dVY3GNHJWXGKo38Ffh1k0zLa32jDGywU738/aNUFgRQ==
   dependencies:
-    "@types/node" "^12.0.10"
     antlr4ts "^0.5.0-alpha.3"
 
 lcid@^1.0.0:

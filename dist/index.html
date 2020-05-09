@@ -8,18 +8,110 @@
       html,
       body {
         height: 100%;
+        margin:0;  
+        overflow: hidden;      
       }
-      #editor {
-        width: 800px;
-        height: 80%;
+      div.left, div.right {
+        width: 48%;
+        height: 100%;
+        float: left;
+        padding: 5px;
       }
+      .Person, .Date, .Place{
+        font-weight: bold;      
+        color: crimson;
+      }
+      .Date::after{content:'⏳'; font-size: 10px; margin: 2px 0 5px;}
+      .Person::after{content:'👤'; font-size: 10px;margin: 2px 0 5px; }
+      .Place::after{content:'📍'; font-size: 10px; margin: 2px 0 5px; }
+      .Cover{
+        border: 1px solid black;
+      }
+      div.right{       
+        padding: 5px;  
+        height: 93%;              
+        writing-mode: vertical-rl;
+        font-family: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
+      }
+      div.display{
+        height: 95%;
+        width: 100%;
+        overflow: scroll;
+        border: 1px solid black;   
+        display: block;       
+      }
+      .koji{padding: 5px;}
+      #editor{
+        height: 92%;        
+        width: 100%;
+      }
+
+  .Okurigana {
+    font-size: 1px;
+    vertical-align: super;
+  }
+  .Kaeriten {
+    font-size: 1px;
+    vertical-align: sub;
+  }
+  .Warigaki {
+    display: inline-table;
+    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
+    -ms-writing-mode: vertical-rl;
+    -moz-writing-mode: vertical-rl;
+    vertical-align: top;
+  }
+  .warigaki-left,
+  .warigaki-right {
+    font-size: 50%;
+    display: table-row;
+    line-height: 150%;
+  }
+  .box {
+    margin: 2px;
+    border: 1px solid black;
+    display: inline;
+  }
+  .Comment {
+    color: red;
+  }
+  .Comment:before {
+      content: "\1F4AC";
+      font-size: 12px;
+      margin: 5px 0 -5px;
+    }
+  .Illegible, .BugHole {
+    background-color: yellow;   
+  }  
+  .Illegible:after {
+      content: "\2753";
+      font-size: 5px;
+  }
+  .BugHole:after {
+      content: "🐛";
+      font-size: 5px;
+  }
     </style>
   </head>
   <body>
-    <div id="editor"></div>
-    <div class="buttons">
-      <button id="warigaki">割書</button>
-      <button id="date">日時</button>
+    <div class="left">
+      <div id="editor"></div>
+      <div class="buttons">
+        <button onclick="insertTitle()">題</button>
+        <button id="warigaki">割書</button>
+        <button id="date">日時</button>
+        <button id="person" onclick="insertPerson()">人物</button>
+        <button id="place" onclick="insertPlace()">場所</button>
+        <select id="content" name="content">
+          <option value="html">HTML</option>
+          <option value="html">XML</option>
+          <option value="legend">凡例</option>
+          </select>
+      </div>
+    </div>
+    <div class="right">
+      <div class="display"></div>     
     </div>
     <script>
       const src = `％表紙
@@ -43,14 +135,29 @@
 ｛無名氏識｝`;
       const parent = document.getElementById('editor');
       const editor = new KojiEditor.Editor(parent, src);
+      editor.watch('htmlString', (store)=>{
+        const right = document.querySelector('.display')
+        right.innerHTML = editor.htmlString
+      })
+
+
       const warigaki = document.querySelector('#warigaki');
       const date = document.querySelector('#date');
       warigaki.addEventListener('click', () => {
         editor.insertOrReplace('《割書：一行目｜二行目》');
       });
       date.addEventListener('click', () => {
-        editor.markup('《日時：', '》');
+        editor.markup('＜', '＞');
       });
+      function insertPerson(){
+        editor.markup('｛', '｝');
+      }
+      function insertPlace(){
+        editor.markup('〔', '〕');
+      }
+      function insertTitle(){
+        editor.markup('《題：', '》');
+      }
     </script>
   </body>
 </html>

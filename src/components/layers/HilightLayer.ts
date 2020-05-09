@@ -25,8 +25,32 @@ export default class HilightLayer extends Layer {
 		store.$watch([ 'selection', 'src' ], () => {
 			if (!store.isRegionSelected) {
 				this.renderParenPairHighlight();
+				const pos = store.state.selection.start;
+				const parseResult = store.state.parseResult;
+				if (!parseResult) return;
+				const inlines = parseResult.ast.inlines;
+				const inline = inlines.find((i) => pos >= i.location.start && pos <= i.location.stop);
+				const blocks = parseResult.ast.blocks;
+				const block = blocks.find((b) => pos >= b.location.start && pos <= b.content.start);
+				this.clearOverlays();
+				if (inline) {
+					store.SET_CURRENT_NODE(inline);
+				} else if (block) {
+					store.SET_CURRENT_NODE(block);
+				} else {
+					store.SET_CURRENT_NODE(null);
+					this.clearOverlays();
+				}
+			}
+		});
+		store.$watch('currentNode', () => {
+			const node = store.state.currentNode;
+			if (!node) return;
+			if (node.type === 'inline') {
 				this.renderInlineHighlight();
+			} else if (node.type === 'block') {
 				this.renderBlockHighlight();
+			} else {
 			}
 		});
 	}
@@ -34,7 +58,11 @@ export default class HilightLayer extends Layer {
 	private setupWorker() {
 		this.worker.onmessage = (ev) => {
 			if (ev.data.type === 'parse') {
+				console.log(ev.data.result);
 				store.SET_PARSE_RESULT(ev.data.result);
+			}
+			if (ev.data.type === 'convertToHtml') {
+				store.SET_HTML_STRING(ev.data.html);
 			}
 		};
 	}
@@ -45,6 +73,7 @@ export default class HilightLayer extends Layer {
 		}
 		this.timerId = window.setTimeout(() => {
 			this.worker.postMessage({ type: 'parse', src: store.state.src.text });
+			this.worker.postMessage({ type: 'convertToHtml', src: store.state.src.text });
 			this.waitingParse = false;
 		}, 10);
 	}
@@ -83,9 +112,14 @@ export default class HilightLayer extends Layer {
 		}
 	}
 
-	renderInlineHighlight() {
+	clearOverlays() {
+		this.blockOverlays.forEach((o) => o.remove());
+		this.blockOverlays = [];
 		this.inlineOverlays.forEach((o) => o.remove());
 		this.inlineOverlays = [];
+	}
+
+	renderInlineHighlight() {
 		const pos = store.state.selection.start;
 		const parseResult = store.state.parseResult;
 		if (!parseResult) return;
@@ -104,8 +138,6 @@ export default class HilightLayer extends Layer {
 	}
 
 	renderBlockHighlight() {
-		this.blockOverlays.forEach((o) => o.remove());
-		this.blockOverlays = [];
 		const pos = store.state.selection.start;
 		const parseResult = store.state.parseResult;
 		if (!parseResult) return;

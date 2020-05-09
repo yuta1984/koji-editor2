@@ -4,19 +4,26 @@ import { cssClasses } from '../../constants';
 
 export default class CaretLayer extends Layer {
 	$caret = this.h('span', cssClasses.CARET);
+	$tagInfo = this.h('span', cssClasses.TAG_INFO);
 
 	constructor() {
 		super();
 		this.$el.classList.add(cssClasses.CARET_LAYER);
 		this.$el.appendChild(this.$caret);
+		this.$el.appendChild(this.$tagInfo);
+		this.hideTagInfo();
 
 		store.$watch([ 'caretPos', 'input' ], () => {
 			if (store.state.focus && !store.isRegionSelected) {
 				this.moveCaret();
+				this.renderTagInfo();
 			} else {
 				this.hideCaret();
+				this.hideTagInfo();
 			}
 		});
+
+		store.$watch('selection', () => {});
 	}
 
 	moveCaret() {
@@ -27,5 +34,21 @@ export default class CaretLayer extends Layer {
 
 	hideCaret() {
 		this.$caret.style.display = 'none';
+	}
+
+	renderTagInfo() {
+		const node = store.state.currentNode;
+		if (node) {
+			this.$tagInfo.innerText = `タグ：${node.name}`;
+			this.$tagInfo.style.display = 'block';
+			this.$tagInfo.style.top = this.$caret.style.top;
+			this.$tagInfo.style.left = this.$caret.style.left;
+		} else {
+			this.hideTagInfo();
+		}
+	}
+
+	hideTagInfo() {
+		this.$tagInfo.style.display = 'none';
 	}
 }
