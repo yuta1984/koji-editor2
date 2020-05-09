@@ -1,7 +1,7 @@
 import store from '../../store';
 import Layer from './AbstractLayer';
 import { cssClasses } from '../../constants';
-const KojiWorker = require('worker-loader?inline!../../koji-lang.worker');
+const KojiWorker = require('worker-loader?name=/koji-lang.worker.js&inline!../../koji-lang.worker');
 
 export default class HilightLayer extends Layer {
 	errorOverlays: HTMLElement[] = [];
