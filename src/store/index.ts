@@ -24,6 +24,7 @@ interface ParseResult {
 }
 
 export interface IState {
+	disabled: boolean;
 	initialized: boolean;
 	src: {
 		text: string;
@@ -62,6 +63,7 @@ export interface IState {
 
 class Store {
 	state: IState = {
+		disabled: false,
 		initialized: false,
 		src: {
 			text: ''
@@ -104,6 +106,7 @@ class Store {
 		htmlString: ''
 	};
 	handlers: { [P in StateName]: Function[] } = {
+		disabled: [],
 		initialized: [],
 		src: [],
 		requestedSrc: [],
@@ -368,6 +371,11 @@ class Store {
 	@Mutation('currentNode')
 	SET_CURRENT_NODE(value: KojiBlockNode | KojiInlineNode | null) {
 		this.state.currentNode = value;
+	}
+
+	@Mutation('disabled')
+	SET_DISABLED(value: boolean) {
+		this.state.disabled = value;
 	}
 
 	$trigger(state: StateName | StateName[]) {

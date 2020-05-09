@@ -36,9 +36,15 @@ export default class Editor extends BaseComponent {
 		const src = store.state.src.text;
 		const { start, end } = store.state.selection;
 		this.focus();
-		if (start !== end) document.execCommand('delete');
-		document.execCommand('insertText', false, text);
-		store.SET_REQUESTED_SRC(store.state.src.text); // to trigger renderAll()
+		if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+			const pre = src.slice(0, start);
+			const post = src.slice(end, src.length - 1);
+			store.SET_REQUESTED_SRC(pre + text + post);
+		} else {
+			if (start !== end) document.execCommand('delete');
+			document.execCommand('insertText', false, text);
+			store.SET_REQUESTED_SRC(store.state.src.text); // to trigger renderAll()
+		}
 		store.SET_REQUESTED_SELECTION({ start: start, end: start + text.length });
 	}
 
@@ -57,6 +63,18 @@ export default class Editor extends BaseComponent {
 
 	watch(state: StateName, handler: () => void) {
 		store.$watch(state, handler);
+	}
+
+	set disabled(value: boolean) {
+		store.SET_DISABLED(value);
+	}
+
+	get disabled(): boolean {
+		return store.state.disabled;
+	}
+
+	set value(src: string) {
+		store.SET_REQUESTED_SRC(src);
 	}
 
 	get value(): string {

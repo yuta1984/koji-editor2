@@ -46,6 +46,9 @@
         width: 100%;
       }
 
+  .Furigana {
+    
+  }
   .Okurigana {
     font-size: 1px;
     vertical-align: super;
@@ -97,7 +100,7 @@
   <body>
     <div class="left">
       <div id="editor"></div>
-      <div class="buttons">
+      <div class="buttons">        
         <button onclick="insertTitle()">題</button>
         <button id="warigaki">割書</button>
         <button id="date">日時</button>
@@ -107,7 +110,9 @@
           <option value="html">HTML</option>
           <option value="html">XML</option>
           <option value="legend">凡例</option>
-          </select>
+        </select>
+        <br>
+        <button onclick="toggleDisabled()">無効化／有効化</button>        
       </div>
     </div>
     <div class="right">
@@ -139,8 +144,6 @@
         const right = document.querySelector('.display')
         right.innerHTML = editor.htmlString
       })
-
-
       const warigaki = document.querySelector('#warigaki');
       const date = document.querySelector('#date');
       warigaki.addEventListener('click', () => {
@@ -157,6 +160,9 @@
       }
       function insertTitle(){
         editor.markup('《題：', '》');
+      }
+      function toggleDisabled(){
+        editor.disabled = !editor.disabled
       }
     </script>
   </body>

@@ -51,6 +51,9 @@ $linenum-bar-height: 30px;
 }
 
 .koji-editor-display {
+	&.disabled {
+		background-color: rgb(241, 241, 241);
+	}
 	@include editor();
 	box-sizing: border-box;
 	//border: 1px solid rgb(180, 180, 180);

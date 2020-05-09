@@ -42,6 +42,10 @@ export default class HiddenTextArea extends BaseComponent {
 		store.$watch('initialized', () => {
 			store.SET_SCROLL_WIDTH(this.$el.scrollHeight);
 		});
+
+		store.$watch('disabled', () => {
+			this.$el.disabled = store.state.disabled;
+		});
 	}
 
 	observeFocus() {

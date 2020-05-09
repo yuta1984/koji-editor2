@@ -59,6 +59,14 @@ export default class Display extends BaseComponent {
 			const { width, height } = store.state.editorSize;
 			this.setSize(width, height);
 		});
+
+		store.$watch('disabled', () => {
+			if (store.state.disabled) {
+				this.$el.classList.add('disabled');
+			} else {
+				this.$el.classList.remove('disabled');
+			}
+		});
 	}
 
 	get lines() {
