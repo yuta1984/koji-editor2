@@ -39,10 +39,19 @@ export default class CaretLayer extends Layer {
 	renderTagInfo() {
 		const node = store.state.currentNode;
 		if (node) {
-			this.$tagInfo.innerText = `タグ：${node.name}`;
+			let info = `タグ：${node.name}`;
 			this.$tagInfo.style.display = 'block';
 			this.$tagInfo.style.top = this.$caret.style.top;
 			this.$tagInfo.style.left = this.$caret.style.left;
+			if (node.id) {
+				info += '<br/>';
+				info += `ID=${node.id}`;
+			}
+			if (node.classes && node.classes.length > 0) {
+				info += '<br/>';
+				info += `クラス=${node.classes.join(', ')}`;
+			}
+			this.$tagInfo.innerHTML = info;
 		} else {
 			this.hideTagInfo();
 		}
