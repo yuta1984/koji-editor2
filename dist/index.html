@@ -6,7 +6,7 @@
     <script src="koji-editor.js"></script>
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.2/styles/github.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
     <!-- and it's easy to individually load additional languages -->
     <script charset="UTF-8"
             src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/xml.min.js"></script>
@@ -50,7 +50,7 @@
       }
       .koji{padding: 5px;}
       #editor{
-        height: 90%;        
+        height: 80%;        
         width: 100%;
       }
 
@@ -111,7 +111,12 @@
   <body>
     <div class="left">
       <div id="editor"></div>
-      <div class="buttons" style="padding: 5px;"> 
+      <div class="buttons" style="padding: 5px;">
+        サンプル：
+        <button onclick="editor.value=src1">地震年代記</button>
+        <button onclick="editor.value=src2">和漢朗詠集</button>
+        <button onclick="editor.value=''">空白</button>
+        <br>
         タグ挿入：<button onclick="insertTitle()">題</button>
         <button id="warigaki">割書</button>
         <button id="date">日時</button>
@@ -140,7 +145,7 @@
       </div>
     </div>
     <script>
-      const src = `％表紙
+      const src1 = `％表紙
 安政二改正
 大日本神代ヨリ　　《囲い書き：禁売 》
 《題：地震年代記》
@@ -159,8 +164,27 @@
 ありしかど世（よ）の衰獘（すゐへい）するにもあらず弥栄（いやさか）えにさかえて天地（あめつち）と共（とも）に窮（きはま）りなき我葦原（わがあしはら）
 の中国（なかつくに）の泰平（たいへい）万々歳（ばん〳〵ぜい）たるよしを人々に知（し）らせ参（まゐ）らせんとて
 ｛無名氏識｝`;
+      const src2=`
+《題：春　立春》
+
+％漢詩
+逐（ヲツ）￣テ＿レ吹（カセ）￣ヲ潛￣カニ開￣ク不（ス）＿レ待￣タ＿二芳（ハウ）菲（ヒ）￣ノ之候（コウ）￣ヲ＿一　迎（ムカヘ）￣テ＿レ春￣ヲ乍（タチマ）￣チ変￣ス
+将￣ス＿レ希￣ハン＿二雨露￣ノ之恩￣ヲ＿一　《割書：内宴￣ニ進＿レ花賦紀￣ノ｜叔望｛公乗億 ｝》
+
+％漢詩
+池￣ノ凍￣ノ東頭￣ハ風 度（ワタツ）￣テ解￣ケ窓￣ノ梅￣ノ北面ハ雪封￣シテ寒￣シ　《割書：立春￣ノ日￣ノ書懐 呈￣ス＿二 芸閣諸分友＿一》　｛篤茂｝
+
+％和歌
+年のうちに春はきにけりひとゝせを
+　　こそとやいはんことしとやいはん　｛元方 ｝
+
+％漢詩
+柳無￣シ＿二気力＿一条（エダ）先（マヅ）動￣キ池￣ニ有＿二波￣ノ文＿一氷盡￣ク開￣ク　〔府西池〕　｛白｝
+
+％漢詩
+今日不＿レ知￣ラ誰￣カ計會￣セン　春風春水一時￣ニ来（キ）￣タラント　〔府西池〕　｛白 ｝`;
       const parent = document.getElementById('editor');
-      const editor = new KojiEditor.Editor(parent, src);
+      const editor = new KojiEditor.Editor(parent, "ここにテキストを入力します");
       editor.watch('renderedText', (store)=>{
         if (editor.renderingMode === 'html'){
           const right = document.querySelector('.html')
