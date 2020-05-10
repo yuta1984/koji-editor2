@@ -35,7 +35,7 @@
       }
       div.right{       
         padding: 5px;  
-        height: 93%;                     
+        height: 90%;        
       }
       div.display{
         height: 95%;
@@ -50,20 +50,20 @@
       }
       .koji{padding: 5px;}
       #editor{
-        height: 92%;        
+        height: 90%;        
         width: 100%;
       }
 
   .Furigana {
     
   }
-  .Okurigana {
-    font-size: 1px;
+  .Okurigana {    
     vertical-align: super;
+    font-size: 8px;
   }
-  .Kaeriten {
-    font-size: 1px;
+  .Kaeriten {    
     vertical-align: sub;
+    font-size: 8px;
   }
   .Warigaki {
     display: inline-table;
@@ -112,13 +112,15 @@
     <div class="left">
       <div id="editor"></div>
       <div class="buttons" style="padding: 5px;"> 
-        タグ：<button onclick="insertTitle()">題</button>
+        タグ挿入：<button onclick="insertTitle()">題</button>
         <button id="warigaki">割書</button>
         <button id="date">日時</button>
         <button id="person" onclick="insertPerson()">人物</button>
         <button id="place" onclick="insertPlace()">場所</button>
         <button id="place" onclick="editor.insertOrReplace('□')">難読</button>
         <button id="place" onclick="editor.insertOrReplace('■')">虫損</button>
+        <button id="place" onclick="editor.insertOrReplace('＿レ')">返り点</button>
+        <button id="place" onclick="editor.insertOrReplace('￣カナ')">送り仮名</button>
         <br>
         右側の表示：
         <select id="content" name="content" onchange="displayChanged(this)">
@@ -196,8 +198,6 @@
         const hidden = document.querySelectorAll(`.display:not(.${value})`);
         hidden.forEach(elem => elem.style.display = 'none');
       }
-
-
     </script>
   </body>
 </html>
