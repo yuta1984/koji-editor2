@@ -4,5 +4,8 @@
     "javascript.format.insertSpaceAfterConstructor": true,
     "prettier.configPath": ".prettierrc",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "prettier.prettierPath": "./node_modules/.bin/prettier"
+    "prettier.prettierPath": "./node_modules/.bin/prettier",
+    "[xml]": {
+        "editor.defaultFormatter": "redhat.vscode-xml"
+    }
 }

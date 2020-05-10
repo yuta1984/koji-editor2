@@ -60,7 +60,9 @@ export default class KojiTokenizer extends Tokenizer {
 
 	isLetter(ch: string): boolean {
 		let regex = [
-			/[\u0020-\u007E]/,
+			/[\u0020-\u0022]/,
+			/[\u0024-\u0029]/,
+			/[\u002B-\u007E]/,
 			/[\u2000-\u206F]/,
 			/[\u4E00-\u9FEA\u3400-\u4DFF]/,
 			/[\u3040-\u309F]/,
