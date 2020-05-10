@@ -58,7 +58,8 @@ export interface IState {
 
 	parseResult: ParseResult | null;
 	currentNode: KojiBlockNode | KojiInlineNode | null;
-	htmlString: string;
+	renderingMode: 'html' | 'xml';
+	renderedText: string;
 }
 
 class Store {
@@ -103,7 +104,8 @@ class Store {
 
 		parseResult: null,
 		currentNode: null,
-		htmlString: ''
+		renderingMode: 'html',
+		renderedText: ''
 	};
 	handlers: { [P in StateName]: Function[] } = {
 		disabled: [],
@@ -127,7 +129,8 @@ class Store {
 		proposedCaretPos: [],
 		parseResult: [],
 		currentNode: [],
-		htmlString: []
+		renderingMode: [],
+		renderedText: []
 	};
 
 	get selectedText() {
@@ -363,9 +366,14 @@ class Store {
 		this.state.parseResult = value;
 	}
 
-	@Mutation('htmlString')
-	SET_HTML_STRING(value: string) {
-		this.state.htmlString = value;
+	@Mutation('renderingMode')
+	SET_RENDERING_MODE(value: 'html' | 'xml') {
+		this.state.renderingMode = value;
+	}
+
+	@Mutation('renderedText')
+	SET_RENDERED_TEXT(value: string) {
+		this.state.renderedText = value;
 	}
 
 	@Mutation('currentNode')

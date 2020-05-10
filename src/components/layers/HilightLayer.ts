@@ -16,7 +16,7 @@ export default class HilightLayer extends Layer {
 		super();
 		this.$el.classList.add(cssClasses.HIGHLIGHT_LAYER);
 		this.setupWorker();
-		store.$watch('src', () => {
+		store.$watch([ 'src', 'renderingMode' ], () => {
 			this.prepareParsing();
 		});
 		store.$watch('parseResult', () => {
@@ -58,11 +58,13 @@ export default class HilightLayer extends Layer {
 	private setupWorker() {
 		this.worker.onmessage = (ev) => {
 			if (ev.data.type === 'parse') {
-				console.log(ev.data.result);
 				store.SET_PARSE_RESULT(ev.data.result);
 			}
 			if (ev.data.type === 'convertToHtml') {
-				store.SET_HTML_STRING(ev.data.html);
+				store.SET_RENDERED_TEXT(ev.data.html);
+			}
+			if (ev.data.type === 'convertToXml') {
+				store.SET_RENDERED_TEXT(ev.data.xml);
 			}
 		};
 	}
@@ -73,7 +75,10 @@ export default class HilightLayer extends Layer {
 		}
 		this.timerId = window.setTimeout(() => {
 			this.worker.postMessage({ type: 'parse', src: store.state.src.text });
-			this.worker.postMessage({ type: 'convertToHtml', src: store.state.src.text });
+			if (store.state.renderingMode === 'html')
+				this.worker.postMessage({ type: 'convertToHtml', src: store.state.src.text });
+			if (store.state.renderingMode === 'xml')
+				this.worker.postMessage({ type: 'convertToXml', src: store.state.src.text });
 			this.waitingParse = false;
 		}, 10);
 	}

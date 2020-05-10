@@ -81,6 +81,14 @@ export default class Editor extends BaseComponent {
 		return store.state.src.text;
 	}
 
+	get renderingMode(): 'html' | 'xml' {
+		return store.state.renderingMode;
+	}
+
+	set renderingMode(value: 'html' | 'xml') {
+		store.SET_RENDERING_MODE(value);
+	}
+
 	get selectedText(): string {
 		return store.selectedText;
 	}
@@ -97,7 +105,7 @@ export default class Editor extends BaseComponent {
 		return store.state.parseResult;
 	}
 
-	get htmlString() {
-		return store.state.htmlString;
+	get renderedText() {
+		return store.state.renderedText;
 	}
 }

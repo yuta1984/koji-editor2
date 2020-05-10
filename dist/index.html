@@ -2,8 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Koji Editor</title>
+    <title>Koji Editorデモ</title>
     <script src="koji-editor.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.2/styles/github.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <!-- and it's easy to individually load additional languages -->
+    <script charset="UTF-8"
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/xml.min.js"></script>
     <style>
       html,
       body {
@@ -29,15 +35,17 @@
       }
       div.right{       
         padding: 5px;  
-        height: 93%;              
-        writing-mode: vertical-rl;
-        font-family: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
+        height: 93%;                     
       }
       div.display{
         height: 95%;
         width: 100%;
         overflow: scroll;
         border: 1px solid black;   
+      }
+      div.html{       
+        writing-mode: vertical-rl;
+        font-family: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
         display: block;       
       }
       .koji{padding: 5px;}
@@ -95,28 +103,36 @@
       content: "🐛";
       font-size: 5px;
   }
+  .hljs {
+  	white-space: pre-wrap;
+  }
     </style>
   </head>
   <body>
     <div class="left">
       <div id="editor"></div>
-      <div class="buttons">        
-        <button onclick="insertTitle()">題</button>
+      <div class="buttons" style="padding: 5px;"> 
+        タグ：<button onclick="insertTitle()">題</button>
         <button id="warigaki">割書</button>
         <button id="date">日時</button>
         <button id="person" onclick="insertPerson()">人物</button>
         <button id="place" onclick="insertPlace()">場所</button>
-        <select id="content" name="content">
-          <option value="html">HTML</option>
-          <option value="html">XML</option>
-          <option value="legend">凡例</option>
-        </select>
+        <button id="place" onclick="editor.insertOrReplace('□')">難読</button>
+        <button id="place" onclick="editor.insertOrReplace('■')">虫損</button>
         <br>
-        <button onclick="toggleDisabled()">無効化／有効化</button>        
+        右側の表示：
+        <select id="content" name="content" onchange="displayChanged(this)">
+          <option value="html">HTML</option>
+          <option value="xml">XML</option>          
+          <option value="legend">凡例</option>
+        </select>     
+        <button onclick="toggleDisabled()">エディター無効化／有効化</button>        
       </div>
     </div>
     <div class="right">
-      <div class="display"></div>     
+      <div class="display html"></div>      
+      <div class="display xml" style="display: none;"></div>
+      <div class="display legend" style="display: none;"></div>
     </div>
     <script>
       const src = `％表紙
@@ -140,9 +156,16 @@
 ｛無名氏識｝`;
       const parent = document.getElementById('editor');
       const editor = new KojiEditor.Editor(parent, src);
-      editor.watch('htmlString', (store)=>{
-        const right = document.querySelector('.display')
-        right.innerHTML = editor.htmlString
+      editor.watch('renderedText', (store)=>{
+        if (editor.renderingMode === 'html'){
+          const right = document.querySelector('.html')
+          right.innerHTML = editor.renderedText
+        } else if (editor.renderingMode === 'xml') {
+          const right = document.querySelector('.xml')          
+          console.log(editor.renderedText)
+          right.innerText = `${editor.renderedText}`;
+          hljs.highlightBlock(right);
+        }        
       })
       const warigaki = document.querySelector('#warigaki');
       const date = document.querySelector('#date');
@@ -164,6 +187,17 @@
       function toggleDisabled(){
         editor.disabled = !editor.disabled
       }
+      function displayChanged(selection){
+        const idx = selection.selectedIndex;
+        const value = selection.options[idx].value;
+        if (value === 'html' || value === 'xml') editor.renderingMode = value;
+        const display = document.querySelector(`.display.${value}`);
+        display.style.display = 'block';
+        const hidden = document.querySelectorAll(`.display:not(.${value})`);
+        hidden.forEach(elem => elem.style.display = 'none');
+      }
+
+
     </script>
   </body>
 </html>

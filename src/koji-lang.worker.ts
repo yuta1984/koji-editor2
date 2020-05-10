@@ -16,6 +16,11 @@ ctx.addEventListener('message', (event) => {
 		const result = Koji.parse(src);
 		const html = Koji.convertToHTML(result.ast);
 		ctx.postMessage({ type: 'convertToHtml', html: html });
+	} else if (event.data.type === 'convertToXml') {
+		const src = event.data.src;
+		const result = Koji.parse(src);
+		const xml = Koji.convertToXML(result.ast);
+		ctx.postMessage({ type: 'convertToXml', xml: xml });
 	}
 });
 
