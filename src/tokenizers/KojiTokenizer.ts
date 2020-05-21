@@ -64,12 +64,14 @@ export default class KojiTokenizer extends Tokenizer {
 			/[\u0024-\u0029]/,
 			/[\u002B-\u007E]/,
 			/[\u2000-\u206F]/,
+			/[\u25A0-\u25FF]/,
 			/[\u4E00-\u9FEA\u3400-\u4DFF]/,
 			/[\u3040-\u309F]/,
 			/[\u30A0-\u30FF\u31F0-\u31FF]/,
 			/[\u1B000-\u1B000\u1B100-\u1B12F]/,
 			/[\u3190-\u319F]/,
 			/[\u3000-\u3007\u300C-\u300F\u3012-\u3013\u3016-\u303F]/,
+			/[\uFE30-\uFE4F]/,
 			/[\uFF00-\uFF02\uFF04\uFF06\uFF07\uFF0B-\uFF0E\uFF10-\uFF19\uFF1B\uFF1D\uFF20-\uFF3A\uFF3E\uFF40-\uFF5A\uFF5E-\uFFE2\uFFE4\uFFEF]/
 		];
 		return regex.some((r) => ch.match(r) != null);
