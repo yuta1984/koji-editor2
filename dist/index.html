@@ -27,9 +27,9 @@
         font-weight: bold;      
         color: crimson;
       }
-      .Date::after{content:'⏳'; font-size: 10px; margin: 2px 0 5px;}
-      .Person::after{content:'👤'; font-size: 10px;margin: 2px 0 5px; }
-      .Place::after{content:'📍'; font-size: 10px; margin: 2px 0 5px; }
+      .Date::after{content:'⏳'; font-size: 50%; margin: 2px 0 5px;}
+      .Person::after{content:'👤'; font-size: 50%;margin: 2px 0 5px; }
+      .Place::after{content:'📍'; font-size: 50%; margin: 2px 0 5px; }
       .Cover{
         border: 1px solid black;
       }
@@ -54,8 +54,11 @@
         width: 100%;
       }
 
-  .Furigana {
-    
+  .Furigana {    
+    position: relative;       
+  }
+  .Furigana .left {    
+    ruby-position: under;
   }
   .Okurigana {    
     vertical-align: super;
@@ -73,8 +76,7 @@
     -moz-writing-mode: vertical-rl;
     vertical-align: top;
   }
-  .warigaki-left,
-  .warigaki-right {
+  .warigaki-line {
     font-size: 50%;
     display: table-row;
     line-height: 150%;
@@ -96,12 +98,12 @@
     background-color: yellow;   
   }  
   .Illegible:after {
-      content: "\2753";
-      font-size: 5px;
+      content: "\2753";      
+      font-size: 50%;
   }
   .BugHole:after {
       content: "🐛";
-      font-size: 5px;
+      font-size: 50%;
   }
   .hljs {
   	white-space: pre-wrap;
@@ -126,6 +128,8 @@
         <button id="place" onclick="editor.insertOrReplace('■')">虫損</button>
         <button id="place" onclick="editor.insertOrReplace('＿レ')">返り点</button>
         <button id="place" onclick="editor.insertOrReplace('￣カナ')">送り仮名</button>
+        <button id="place" onclick="editor.markup('《見せ消ち：訂正前の文','｜訂正後の文》')">見せ消ち</button>
+        <button id="place" onclick="editor.markup('《圏点：圏点が付される文','｜﹅》')">圏点</button>
         <br>
         右側の表示：
         <select id="content" name="content" onchange="displayChanged(this)">
@@ -144,6 +148,21 @@
 
       </div>
     </div>
+    <script>
+      const isChrome = !!navigator.userAgent.match(/chrome/i);      
+      if (isChrome){
+        const head = document.head || document.getElementsByTagName('head')[0]
+        const style = document.createElement('style');
+        style.innerText = `
+        .Furigana .left {    
+          font-size: 50%;
+          position: absolute;
+          top: 4px;
+           margin-right: 5px;    
+         }`
+        head.appendChild(style);        
+      }      
+    </script>
     <script>
       const src1 = `％表紙
 安政二改正
@@ -184,14 +203,14 @@
 ％漢詩
 今日不＿レ知￣ラ誰￣カ計會￣セン　春風春水一時￣ニ来（キ）￣タラント　〔府西池〕　｛白 ｝`;
       const parent = document.getElementById('editor');
-      const editor = new KojiEditor.Editor(parent, "ここにテキストを入力します");
+      const editor = new KojiEditor.Editor(parent, "ここにテキストを入力（にゅうりょく｜インプット）します");
       editor.watch('renderedText', (store)=>{
         if (editor.renderingMode === 'html'){
           const right = document.querySelector('.html')
           right.innerHTML = editor.renderedText
         } else if (editor.renderingMode === 'xml') {
           const right = document.querySelector('.xml')          
-          console.log(editor.renderedText)
+          //console.log(editor.renderedText)
           right.innerText = `${editor.renderedText}`;
           hljs.highlightBlock(right);
         }        
