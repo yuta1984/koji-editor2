@@ -70,8 +70,8 @@
   }
   .Warigaki {
     display: inline-table;
-    -webkit-writing-mode: vertical-lr;
-    writing-mode: vertical-lr;
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
     -ms-writing-mode: vertical-rl;
     -moz-writing-mode: vertical-rl;
     vertical-align: top;
@@ -203,7 +203,10 @@
 ％漢詩
 今日不＿レ知￣ラ誰￣カ計會￣セン　春風春水一時￣ニ来（キ）￣タラント　〔府西池〕　｛白 ｝`;
       const parent = document.getElementById('editor');
-      const editor = new KojiEditor.Editor(parent, "ここにテキストを入力（にゅうりょく｜インプット）します");
+      const editor = new KojiEditor.Editor(parent, `ここにテキストを入力（にゅうりょく｜インプット）します
+《圏点：圏点が付される文｜﹅》
+《見せ消ち：訂正前の文｜訂正後の文》
+複数行の割書ができるようになりました《割書：一行目｜二行目｜三行目》`);
       editor.watch('renderedText', (store)=>{
         if (editor.renderingMode === 'html'){
           const right = document.querySelector('.html')
