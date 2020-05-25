@@ -20,8 +20,8 @@ export default class KojiTokenizer extends Tokenizer {
 		'】': 'ANNO_END'
 	};
 	symbols: { [s: string]: TOKEN_TYPE } = {
-		'□': 'ILLEGIBLE',
-		'■': 'BUG_HOLE',
+		'■': 'ILLEGIBLE',
+		'□': 'BUG_HOLE',
 		'＿': 'KAERITEN_START',
 		'￣': 'OKURIGANA_START',
 		'？': 'QUESTION'
@@ -248,12 +248,12 @@ export default class KojiTokenizer extends Tokenizer {
 
 	readSymbol(): Token {
 		const ch = this.is.next();
-		if (ch === '□') {
+		if (ch === '■') {
 			return {
 				type: 'ILLEGIBLE',
 				value: ch
 			};
-		} else if (ch === '■') {
+		} else if (ch === '□') {
 			return { type: 'BUG_HOLE', value: ch };
 		} else if (ch === '？') {
 			return { type: 'QUESTION', value: ch };
