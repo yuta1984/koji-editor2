@@ -1,8 +1,7 @@
 const path = require('path');
-const webpack = require('webpack');
-
 const ROOT = path.resolve(__dirname, 'src');
 const DESTINATION = path.resolve(__dirname, 'dist');
+const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 
 module.exports = {
 	context: ROOT,
@@ -12,12 +11,12 @@ module.exports = {
 	},
 
 	output: {
-		filename: 'koji-editor.js',
+		filename: 'koji-editor.min.js',
 		path: DESTINATION,
 		library: 'KojiEditor',
 		libraryTarget: 'umd'
 	},
-
+	plugins: [ new UnminifiedWebpackPlugin() ],
 	resolve: {
 		extensions: [ '.ts', '.js' ],
 		modules: [ ROOT, 'node_modules' ]
@@ -28,12 +27,12 @@ module.exports = {
 			/****************
        * PRE-LOADERS
        *****************/
-			{
-				enforce: 'pre',
-				test: /\.js$/,
-				use: 'source-map-loader',
-				exclude: [ path.join(process.cwd(), 'node_modules') ]
-			},
+			// {
+			// 	enforce: 'pre',
+			// 	test: /\.js$/,
+			// 	use: 'source-map-loader',
+			// 	exclude: [ path.join(process.cwd(), 'node_modules') ]
+			// },
 			// {
 			//   test: /\.worker\.ts$/,
 			//   loader: 'worker-loader',
