@@ -68,10 +68,10 @@ export default class HiddenTextArea extends BaseComponent {
 				}
 			});
 			store.SET_SCROLL_WIDTH(this.$el.scrollHeight);
-		});
-		store.SET_SELECTION({
-			start: this.$el.selectionStart,
-			end: this.$el.selectionEnd
+			store.SET_SELECTION({
+				start: this.$el.selectionStart,
+				end: this.$el.selectionEnd
+			});
 		});
 	}
 

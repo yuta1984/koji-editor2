@@ -1,6 +1,6 @@
 {
 	"name": "koji-editor",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A web-based text editor for Koji, a lightweight markup language for historical Japanese texts",
 	"main": "index.js",
 	"engines": {
