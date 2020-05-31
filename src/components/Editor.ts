@@ -28,7 +28,7 @@ export default class Editor extends BaseComponent {
 	resize() {
 		const parent = this.$el.parentElement;
 		const width = parent!.clientWidth || 600;
-		const height = parent!.clientHeight - this.lineIndicatorHeight || 600;
+		const height = parent!.clientHeight || 600;
 		this.setSize(width, height);
 		store.SET_EDITOR_SIZE(width, height);
 	}

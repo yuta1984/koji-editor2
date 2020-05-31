@@ -19,6 +19,9 @@ export default abstract class Layer extends BaseComponent {
 		store.$watch('scrollWidth', () => {
 			this.$el.style.width = store.state.scrollWidth + 'px';
 		});
+		store.$watch('disabled', () => {
+			this.$el.style.display = store.state.disabled ? 'none' : 'block';
+		});
 	}
 
 	get $srcPanel() {

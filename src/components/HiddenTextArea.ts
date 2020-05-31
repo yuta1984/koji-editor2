@@ -44,7 +44,7 @@ export default class HiddenTextArea extends BaseComponent {
 		});
 
 		store.$watch('disabled', () => {
-			this.$el.disabled = store.state.disabled;
+			this.$el.style.display = store.state.disabled ? 'none' : 'block';
 		});
 	}
 

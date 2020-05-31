@@ -64,7 +64,7 @@ export default class KojiTokenizer extends Tokenizer {
 			/[\u0024-\u0029]/,
 			/[\u002B-\u007E]/,
 			/[\u2000-\u206F]/,
-			/[\u25A0-\u25FF]/,
+			/[\u25A2-\u25FF]/,
 			/[\u4E00-\u9FEA\u3400-\u4DFF]/,
 			/[\u3040-\u309F]/,
 			/[\u30A0-\u30FF\u31F0-\u31FF]/,
