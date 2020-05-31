@@ -1,7 +1,7 @@
 import HiddenTextArea from './HiddenTextArea';
 import Display from './Display';
 import BaseComponent from './BaseComponent';
-import store, { StateName } from '../store';
+import store, { StateName, initStore } from '../store';
 import { cssClasses } from '../constants';
 
 export default class Editor extends BaseComponent {
@@ -20,6 +20,7 @@ export default class Editor extends BaseComponent {
 		parentEl.appendChild(this.$el);
 		parentEl.addEventListener('resize', () => this.resize());
 		this.resize();
+		initStore();
 		store.SET_REQUESTED_SRC(src);
 		store.SET_INITIALIZED(true);
 	}
