@@ -63,75 +63,88 @@ export interface IState {
 }
 
 class Store {
-	state: IState = {
-		disabled: false,
-		initialized: false,
-		src: {
-			text: ''
-		},
-		requestedSrc: '',
-		requestFocus: false,
-		selection: {
-			start: 0,
-			end: 0
-		},
-		requestedSelection: {
-			start: 0,
-			end: 0
-		},
-		selectedRects: [],
-		caretPos: { x: 0, y: 0 },
-		input: {
-			text: '',
+	state: IState = this.initState();
+	handlers: { [P in StateName]: Function[] } = this.initHandlers();
+
+	init() {
+		this.state = this.initState();
+		this.handlers = this.initHandlers();
+	}
+
+	initHandlers(): { [P in StateName]: Function[] } {
+		return {
+			disabled: [],
+			initialized: [],
+			src: [],
+			requestedSrc: [],
+			requestFocus: [],
+			selection: [],
+			requestedSelection: [],
+			selectedRects: [],
+			input: [],
+			focus: [],
+			scroll: [],
+			scrollWidth: [],
+			editorSize: [],
+			caretPos: [],
+			compositionActive: [],
+			compositionText: [],
+			compositionRects: [],
+			keyboardEvent: [],
+			proposedCaretPos: [],
+			parseResult: [],
+			currentNode: [],
+			renderingMode: [],
+			renderedText: []
+		};
+	}
+
+	initState(): IState {
+		return {
+			disabled: false,
+			initialized: false,
+			src: {
+				text: ''
+			},
+			requestedSrc: '',
+			requestFocus: false,
 			selection: {
 				start: 0,
 				end: 0
-			}
-		},
-		scroll: 0,
-		scrollWidth: 0,
-		editorSize: {
-			width: 0,
-			height: 0
-		},
-		focus: false,
-		compositionActive: false,
-		compositionText: '',
-		compositionRects: [],
+			},
+			requestedSelection: {
+				start: 0,
+				end: 0
+			},
+			selectedRects: [],
+			caretPos: { x: 0, y: 0 },
+			input: {
+				text: '',
+				selection: {
+					start: 0,
+					end: 0
+				}
+			},
+			scroll: 0,
+			scrollWidth: 0,
+			editorSize: {
+				width: 0,
+				height: 0
+			},
+			focus: false,
+			compositionActive: false,
+			compositionText: '',
+			compositionRects: [],
 
-		keyboardEvent: null,
-		proposedCaretPos: 0,
+			keyboardEvent: null,
+			proposedCaretPos: 0,
 
-		parseResult: null,
-		currentNode: null,
-		renderingMode: 'html',
-		renderedText: ''
-	};
-	handlers: { [P in StateName]: Function[] } = {
-		disabled: [],
-		initialized: [],
-		src: [],
-		requestedSrc: [],
-		requestFocus: [],
-		selection: [],
-		requestedSelection: [],
-		selectedRects: [],
-		input: [],
-		focus: [],
-		scroll: [],
-		scrollWidth: [],
-		editorSize: [],
-		caretPos: [],
-		compositionActive: [],
-		compositionText: [],
-		compositionRects: [],
-		keyboardEvent: [],
-		proposedCaretPos: [],
-		parseResult: [],
-		currentNode: [],
-		renderingMode: [],
-		renderedText: []
-	};
+			parseResult: null,
+			currentNode: null,
+			renderingMode: 'html',
+			renderedText: ''
+		};
+	}
 
 	get selectedText() {
 		const { start, end } = this.state.selection;
@@ -408,10 +421,6 @@ class Store {
 		}
 	}
 }
-let store = new Store();
+const store = new Store();
 (<any>window).store = store;
 export default store;
-
-export function initStore() {
-	store = new Store();
-}
