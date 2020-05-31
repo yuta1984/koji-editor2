@@ -408,6 +408,10 @@ class Store {
 		}
 	}
 }
-const store = new Store();
+let store = new Store();
 (<any>window).store = store;
 export default store;
+
+export function initStore() {
+	store = new Store();
+}

@@ -1,7 +1,7 @@
 import HiddenTextArea from './HiddenTextArea';
 import Display from './Display';
 import BaseComponent from './BaseComponent';
-import store, { StateName } from '../store';
+import store, { StateName, initStore } from '../store';
 import { cssClasses } from '../constants';
 
 export default class Editor extends BaseComponent {
@@ -11,6 +11,7 @@ export default class Editor extends BaseComponent {
 
 	constructor(parentEl: HTMLElement, src = '') {
 		super();
+		initStore();
 		this.$el = document.createElement('div');
 		this.$el.classList.add(cssClasses.EDITOR);
 		this.$linenumBg = this.h('div', cssClasses.LINENUM_BG);
