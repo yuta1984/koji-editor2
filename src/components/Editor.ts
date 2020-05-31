@@ -21,6 +21,7 @@ export default class Editor extends BaseComponent {
 		parentEl.appendChild(this.$el);
 		parentEl.addEventListener('resize', () => this.resize());
 		this.resize();
+		initStore();
 		store.SET_REQUESTED_SRC(src);
 		store.SET_INITIALIZED(true);
 	}
