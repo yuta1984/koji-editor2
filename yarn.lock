@@ -2740,10 +2740,10 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-koji-lang@^0.4.7:
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/koji-lang/-/koji-lang-0.4.7.tgz#5a1504f2d99f7e38acf2ca2ea25386946f3e16b6"
-  integrity sha512-rc5i8HRBUXAHWGshiunluVFuyWpUxf0yXAv3iPR+HxV9lqN1znv2DeiCeuen1muOzMvnghTo4kDO2sGxwamlVA==
+koji-lang@^0.4.8:
+  version "0.4.8"
+  resolved "https://registry.yarnpkg.com/koji-lang/-/koji-lang-0.4.8.tgz#cde1a0da6e9c0f77dcd758dad72025a8a4c03e47"
+  integrity sha512-XIFOHC1u0ZfNPMyvT5RdIOp3fR9k7a2sNpchAFWiumbyYl5npjIZi3ZcbEzytoxgsaDtOVVMXGOqPfuyZGF1pw==
   dependencies:
     antlr4ts "^0.5.0-alpha.3"
     mustache "^4.0.1"
