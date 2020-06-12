@@ -37,6 +37,6 @@
 		"worker-loader": "^2.0.0"
 	},
 	"dependencies": {
-		"koji-lang": "^0.4.8"
+		"koji-lang": "^0.4.9"
 	}
 }
