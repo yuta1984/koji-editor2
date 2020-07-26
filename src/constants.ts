@@ -3,6 +3,7 @@ export const cssClasses = {
     EDITOR: 'koji-editor',
     SRC_PANEL: 'koji-editor-src-panel',
     LINE: 'koji-editor-line',
+    LINE_WITH_ERROR: 'koji-editor-line-error',
     LINENUM_BG: 'koji-editor-linenum-bg',
     CARET: 'koji-editor-caret',
     TAG_INFO: 'koji-editor-tag-info',

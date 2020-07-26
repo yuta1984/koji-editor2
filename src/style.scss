@@ -161,6 +161,11 @@ $linenum-bar-height: 30px;
 				font-size: 10px;
 				text-align: center;
 			}
+			&.koji-editor-line-error {
+				&:before {
+					color: red;
+				}
+			}
 			.char {
 				height: 16px;
 				width: 16px;

@@ -67,6 +67,19 @@ export default class Display extends BaseComponent {
 				this.$el.classList.remove('disabled');
 			}
 		});
+
+		store.$watch('parseResult', () => {
+			const result = store.state.parseResult;
+			const lines = this.$el.getElementsByClassName(cssClasses.LINE_WITH_ERROR);
+			for (let i = 0; i < lines.length; i++) {
+				lines[i].classList.remove(cssClasses.LINE_WITH_ERROR);
+			}
+			if (result && result.errors.length > 0) {
+				result.errors.forEach((e: any) => {
+					this.lines[e.line - 1].classList.add(cssClasses.LINE_WITH_ERROR);
+				});
+			}
+		});
 	}
 
 	get lines() {
