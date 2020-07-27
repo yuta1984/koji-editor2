@@ -109,4 +109,8 @@ export default class Editor extends BaseComponent {
 	get renderedText() {
 		return store.state.renderedText;
 	}
+
+	get store() {
+		return store;
+	}
 }
