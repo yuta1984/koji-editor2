@@ -1,6 +1,7 @@
 import store from '../../store';
 import Layer from './AbstractLayer';
 import { cssClasses } from '../../constants';
+import { notEqual } from 'assert';
 
 export default class CaretLayer extends Layer {
 	$caret = this.h('span', cssClasses.CARET);
@@ -13,7 +14,7 @@ export default class CaretLayer extends Layer {
 		this.$el.appendChild(this.$tagInfo);
 		this.hideTagInfo();
 
-		store.$watch([ 'caretPos', 'input' ], () => {
+		store.$watch(['caretPos', 'input'], () => {
 			if (store.state.focus && !store.isRegionSelected) {
 				this.moveCaret();
 				this.renderTagInfo();
@@ -23,7 +24,7 @@ export default class CaretLayer extends Layer {
 			}
 		});
 
-		store.$watch('selection', () => {});
+		store.$watch('selection', () => { });
 	}
 
 	moveCaret() {
@@ -41,8 +42,9 @@ export default class CaretLayer extends Layer {
 		if (node) {
 			let info = `タグ：${node.name}`;
 			this.$tagInfo.style.display = 'block';
-			this.$tagInfo.style.top = this.$caret.style.top;
-			this.$tagInfo.style.left = this.$caret.style.left;
+			const rect = this.$caret.getBoundingClientRect();
+			this.$tagInfo.style.top = rect.top + "px";
+			this.$tagInfo.style.left = rect.left + "px";
 			if (node.id) {
 				info += '<br/>';
 				info += `ID=${node.id}`;
@@ -50,6 +52,10 @@ export default class CaretLayer extends Layer {
 			if (node.classes && node.classes.length > 0) {
 				info += '<br/>';
 				info += `クラス=${node.classes.join(', ')}`;
+			}
+			if (node.name == '注釈') {
+				const anno = node.children[0].join('').replace(/\//g, '<br/>');
+				info += "<br>" + anno;
 			}
 			this.$tagInfo.innerHTML = info;
 		} else {

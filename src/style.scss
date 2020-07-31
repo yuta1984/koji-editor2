@@ -100,7 +100,7 @@ $linenum-bar-height: 30px;
 				animation: blink 1s step-end infinite;
 			}
 			.koji-editor-tag-info {
-				position: absolute;
+				position: fixed;
 				padding: 3px 5px;
 				margin-left: 16px;
 				background: black;
@@ -109,7 +109,7 @@ $linenum-bar-height: 30px;
 				z-index: 999999;
 				font-size: 11px;
 				writing-mode: horizontal-tb;
-				border-radius: 5px;
+				border-radius: 5px;				
 			}
 		}
 		&.koji-editor-selection-layer {
