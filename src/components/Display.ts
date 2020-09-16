@@ -23,20 +23,14 @@ export default class Display extends BaseComponent {
 		this.add(new CaretLayer());
 
 		store.$watch('src', () => this.onSrcChange());
-		store.$watch([ 'selection', 'src', 'focus' ], () => {
+		store.$watch(['selection', 'src', 'focus'], () => {
 			this.updateSelecttionRects();
 			this.updateCaretPos();
 		});
 		// TODO: fix this
 		store.$watch('scroll', () => {
-			const userAgent = window.navigator.userAgent.toLowerCase();
-			if (userAgent.indexOf('chrome') != -1) {
-				const offset = this.$el.scrollWidth - this.$el.clientWidth - store.state.scroll;
-				this.$el.scrollTo(offset, 0);
-			} else {
-				const offset = -store.state.scroll;
-				this.$el.scrollTo(offset, 0);
-			}
+			const offset = -store.state.scroll;
+			this.$el.scrollTo(offset, 0);
 		});
 		// store.$watch('compositionActive', () => {
 		//   if (store.state.compositionActive) {
@@ -47,7 +41,7 @@ export default class Display extends BaseComponent {
 		//   }
 		// })
 		store.$watch('keyboardEvent', () => {
-			const arrowKeys = [ 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown' ];
+			const arrowKeys = ['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'];
 			const e = store.state.keyboardEvent;
 			if (e && arrowKeys.includes(e.key)) {
 				store.SET_REQUESTED_SELECTION(this.proposeSelection(e));
@@ -86,7 +80,7 @@ export default class Display extends BaseComponent {
 		return this.$el.getElementsByClassName(cssClasses.LINE);
 	}
 
-	private proposeSelection(e: KeyboardEvent): { start: number; end: number } {
+	private proposeSelection(e: KeyboardEvent): { start: number; end: number; } {
 		const text = store.state.src.text;
 		const sel = store.currentSelection;
 		const { start, end } = store.state.selection;
@@ -185,7 +179,7 @@ export default class Display extends BaseComponent {
 		});
 	}
 
-	private getCharElemsAt({ start, end }: { start: number; end: number }): Element[] {
+	private getCharElemsAt({ start, end }: { start: number; end: number; }): Element[] {
 		const chars = this.$srcPanel.querySelectorAll('.char');
 		return Array.from(chars).slice(start, end);
 	}
@@ -213,7 +207,7 @@ export default class Display extends BaseComponent {
 		store.SET_SELETECTED_RECTS(rects);
 	}
 
-	absolutePosToInlinePos(pos: number): { pos: number; lineNum: number } {
+	absolutePosToInlinePos(pos: number): { pos: number; lineNum: number; } {
 		const text = store.state.src.text;
 		let lineNum = 0;
 		let inlinePos = 0;
