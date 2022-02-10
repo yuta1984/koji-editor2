@@ -23,7 +23,7 @@
 		"css-loader": "^3.4.0",
 		"global": "^4.4.0",
 		"mocha": "^7.0.0",
-		"node-sass": "^4.13.0",
+		"node-sass": "^7.0.0",
 		"prettier": "^2.0.4",
 		"sass-loader": "^8.0.0",
 		"source-map-loader": "^0.2.4",
